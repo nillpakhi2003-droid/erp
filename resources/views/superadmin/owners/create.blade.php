@@ -13,6 +13,21 @@
             @csrf
 
             <div class="mb-4">
+                <label for="business_id" class="block text-gray-700 text-sm font-bold mb-2">Select Company *</label>
+                <select name="business_id" id="business_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 @error('business_id') border-red-500 @enderror" required>
+                    <option value="">-- Select Company --</option>
+                    @foreach($businesses as $business)
+                        <option value="{{ $business->id }}" {{ old('business_id') == $business->id ? 'selected' : '' }}>
+                            {{ $business->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('business_id')
+                    <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
                 <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name</label>
                 <input type="text" name="name" id="name" value="{{ old('name') }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 @error('name') border-red-500 @enderror" required>
                 @error('name')

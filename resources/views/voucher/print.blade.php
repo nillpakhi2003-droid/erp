@@ -1,3 +1,9 @@
+@php
+    $primaryColor = $template->primary_color ?? '#1e40af';
+    $secondaryColor = $template->secondary_color ?? '#3b82f6';
+    $fontSize = $template->font_size ?? '13px';
+    $pageMargin = $template->page_margin ?? '5mm';
+@endphp
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -13,20 +19,31 @@
             .no-print { display: none; }
             @page { 
                 size: A4;
-                margin: 8mm;
+                margin: {{ $pageMargin }};
             }
             .voucher {
                 box-shadow: none;
-                border: 2px solid #000;
+                border: 1px solid #000;
                 page-break-inside: avoid;
                 min-height: auto;
-                padding: 8mm;
+                padding: {{ $pageMargin }};
             }
             .signature-section {
                 margin-top: 25px;
             }
             .signature-line {
                 margin-top: 35px;
+            }
+            .watermark {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-45deg);
+                font-size: 100px;
+                color: rgba(0, 0, 0, 0.05);
+                z-index: -1;
+                pointer-events: none;
+                white-space: nowrap;
             }
         }
         * {
@@ -37,99 +54,124 @@
         body {
             font-family: 'Noto Sans Bengali', 'Kalpurush', Arial, sans-serif;
             background: #f5f5f5;
-            padding: 15px;
-            line-height: 1.6;
+            padding: 8px;
+            line-height: 1.4;
+            font-size: {{ $fontSize }};
+            position: relative;
         }
         .voucher {
             max-width: 210mm;
             margin: 0 auto;
             background: white;
-            padding: 10mm;
+            padding: 8mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border: 2px solid #333;
+            border: 1px solid #333;
+            position: relative;
+        }
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 100px;
+            color: rgba(0, 0, 0, 0.03);
+            z-index: 0;
+            pointer-events: none;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+        .voucher > * {
+            position: relative;
+            z-index: 1;
         }
         .header {
             text-align: center;
-            border-bottom: 3px double #000;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            border-bottom: 2px double #000;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+        }
+        .company-logo {
+            max-width: 120px;
+            max-height: 80px;
+            margin-bottom: 8px;
         }
         .company-name {
-            font-size: 32px;
+            font-size: 22px;
             font-weight: bold;
-            color: #1e40af;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
+            color: {{ $primaryColor }};
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
         }
         .company-details {
-            font-size: 14px;
+            font-size: 11px;
             color: #4b5563;
-            line-height: 1.8;
+            line-height: 1.5;
         }
         .header-text {
-            font-size: 13px;
+            font-size: 10px;
             font-style: italic;
             color: #6b7280;
-            margin-top: 8px;
+            margin-top: 4px;
             font-weight: 500;
         }
         .voucher-title {
             text-align: center;
-            font-size: 20px;
+            font-size: 15px;
             font-weight: bold;
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, {{ $primaryColor }} 0%, {{ $secondaryColor }} 100%);
             color: white;
-            padding: 8px;
-            margin: 12px 0;
-            border-radius: 6px;
-            letter-spacing: 1px;
+            padding: 5px;
+            margin: 8px 0;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
         }
         .voucher-meta {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
-            padding: 8px;
+            margin-bottom: 10px;
+            padding: 5px 8px;
             background: #f9fafb;
-            border-left: 4px solid #3b82f6;
+            border-left: 3px solid {{ $secondaryColor }};
         }
         .voucher-number {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: bold;
             color: #dc2626;
         }
         .voucher-date {
-            font-size: 14px;
+            font-size: 12px;
             color: #4b5563;
         }
         .section {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .section-title {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             color: #1f2937;
-            border-bottom: 2px solid #3b82f6;
-            padding-bottom: 6px;
-            margin-bottom: 10px;
+            border-bottom: 1px solid {{ $secondaryColor }};
+            padding-bottom: 4px;
+            margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            padding: 10px;
+            gap: 6px;
+            padding: 6px;
             background: #f9fafb;
-            border-radius: 6px;
+            border-radius: 4px;
         }
         .info-item {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            font-size: 12px;
         }
         .info-label {
             font-weight: 600;
             color: #374151;
-            min-width: 120px;
+            min-width: 100px;
         }
         .info-value {
             color: #111827;
@@ -138,51 +180,52 @@
         .table {
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
+            margin: 8px 0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 12px;
         }
         .table th {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, {{ $primaryColor }} 0%, {{ $secondaryColor }} 100%);
             color: white;
-            padding: 8px 10px;
+            padding: 5px 6px;
             text-align: left;
-            border: 1px solid #2563eb;
+            border: 1px solid {{ $secondaryColor }};
             font-weight: 600;
-            font-size: 13px;
+            font-size: calc({{ $fontSize }} + 0px);
         }
         .table td {
-            padding: 8px 10px;
+            padding: 4px 6px;
             border: 1px solid #d1d5db;
             background: white;
-            font-size: 13px;
+            font-size: 12px;
         }
         .table tbody tr:hover {
             background: #f9fafb;
         }
         .total-section {
-            margin-top: 15px;
-            padding: 12px;
+            margin-top: 10px;
+            padding: 8px;
             background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-            border: 2px solid #3b82f6;
-            border-radius: 6px;
+            border: 1px solid {{ $secondaryColor }};
+            border-radius: 4px;
         }
         .total-row {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
-            font-size: 14px;
+            padding: 4px 0;
+            font-size: 12px;
             border-bottom: 1px dashed #d1d5db;
         }
         .total-row:last-child {
             border-bottom: none;
         }
         .total-row.grand {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
             color: #059669;
-            border-top: 3px double #000;
-            padding-top: 10px;
-            margin-top: 8px;
+            border-top: 2px double #000;
+            padding-top: 6px;
+            margin-top: 5px;
             border-bottom: none;
         }
         .total-row.due {
@@ -191,46 +234,46 @@
         .signature-section {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-            margin-top: 25px;
-            padding-top: 10px;
+            gap: 30px;
+            margin-top: 15px;
+            padding-top: 8px;
         }
         .signature-box {
             text-align: center;
         }
         .signature-line {
-            border-top: 2px solid #000;
-            margin-top: 35px;
-            padding-top: 8px;
+            border-top: 1px solid #000;
+            margin-top: 25px;
+            padding-top: 5px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 11px;
             color: #374151;
         }
         .footer {
-            margin-top: 20px;
-            padding-top: 10px;
-            border-top: 2px solid #e5e7eb;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #e5e7eb;
             text-align: center;
-            font-size: 10px;
+            font-size: 9px;
             color: #6b7280;
         }
         .footer-highlight {
-            margin-bottom: 6px;
-            font-size: 12px;
+            margin-bottom: 4px;
+            font-size: 10px;
             color: #1f2937;
             font-weight: 600;
         }
         .print-button {
             background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
             color: white;
-            padding: 14px 40px;
+            padding: 8px 20px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 5px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
             transition: all 0.3s;
         }
         .print-button:hover {
@@ -270,9 +313,17 @@
     </div>
 
     <div class="voucher">
+        <!-- Watermark -->
+        @if($template && $template->show_watermark && $template->watermark_text)
+            <div class="watermark">{{ $template->watermark_text }}</div>
+        @endif
+
         <!-- Header -->
         <div class="header">
             @if($template)
+                @if($template->logo_url)
+                    <img src="{{ $template->logo_url }}" alt="Company Logo" class="company-logo">
+                @endif
                 <div class="company-name">{{ $template->company_name }}</div>
                 <div class="company-details">
                     @if($template->company_address)

@@ -43,62 +43,56 @@ class RolePermissionSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Sync permissions for existing roles
+        // Create roles if they don't exist
+        $superAdmin = Role::firstOrCreate(['name' => 'superadmin']);
+        $owner = Role::firstOrCreate(['name' => 'owner']);
+        $manager = Role::firstOrCreate(['name' => 'manager']);
+        $salesman = Role::firstOrCreate(['name' => 'salesman']);
+
+        // Sync permissions for roles
         
         // Super Admin
-        $superAdmin = Role::where('name', 'superadmin')->first();
-        if ($superAdmin) {
-            $superAdmin->syncPermissions([
-                'manage-owners',
-                'view-all-users',
-                'manage-products',
-                'view-products',
-                'add-stock',
-                'view-stock',
-                'view-all-sales',
-                'view-all-reports',
-            ]);
-        }
+        $superAdmin->syncPermissions([
+            'manage-owners',
+            'view-all-users',
+            'manage-products',
+            'view-products',
+            'add-stock',
+            'view-stock',
+            'view-all-sales',
+            'view-all-reports',
+        ]);
 
         // Owner
-        $owner = Role::where('name', 'owner')->first();
-        if ($owner) {
-            $owner->syncPermissions([
-                'manage-managers',
-                'view-all-users',
-                'manage-products',
-                'view-products',
-                'add-stock',
-                'view-stock',
-                'create-sales',
-                'view-all-sales',
-                'view-all-reports',
-            ]);
-        }
+        $owner->syncPermissions([
+            'manage-managers',
+            'view-all-users',
+            'manage-products',
+            'view-products',
+            'add-stock',
+            'view-stock',
+            'create-sales',
+            'view-all-sales',
+            'view-all-reports',
+        ]);
 
         // Manager
-        $manager = Role::where('name', 'manager')->first();
-        if ($manager) {
-            $manager->syncPermissions([
-                'manage-salesmen',
-                'manage-products',
-                'view-products',
-                'add-stock',
-                'view-stock',
-                'create-sales',
-                'view-all-sales',
-                'view-reports',
-            ]);
-        }
+        $manager->syncPermissions([
+            'manage-salesmen',
+            'manage-products',
+            'view-products',
+            'add-stock',
+            'view-stock',
+            'create-sales',
+            'view-all-sales',
+            'view-reports',
+        ]);
 
         // Salesman
-        $salesman = Role::where('name', 'salesman')->first();
-        if ($salesman) {
-            $salesman->syncPermissions([
-                'view-products',
-                'create-sales',
-                'view-own-sales',
-            ]);
-        }
+        $salesman->syncPermissions([
+            'view-products',
+            'create-sales',
+            'view-own-sales',
+        ]);
     }
 }

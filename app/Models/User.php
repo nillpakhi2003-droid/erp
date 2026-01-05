@@ -16,6 +16,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'created_by',
+        'business_id',
         'due_system_enabled',
     ];
 
@@ -34,6 +35,11 @@ class User extends Authenticatable
     }
 
     // Relationships
+    public function business()
+    {
+        return $this->belongsTo(Business::class);
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -52,6 +58,11 @@ class User extends Authenticatable
     public function stockEntries()
     {
         return $this->hasMany(StockEntry::class, 'added_by');
+    }
+
+    public function shopSetting()
+    {
+        return $this->hasOne(ShopSetting::class, 'owner_id');
     }
 
     // Helper methods

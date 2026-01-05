@@ -14,65 +14,96 @@ class OwnerController extends Controller
 {
     public function dashboard()
     {
-        $totalManagers = User::role('manager')->where('created_by', auth()->id())->count();
-        $totalSalesmen = User::role('salesman')
-            ->whereIn('created_by', User::role('manager')->where('created_by', auth()->id())->pluck('id'))
-            ->count();
+        $businessId = auth()->user()->business_id;
         
-    // Today's data
-    $todaySales = Sale::whereDate('created_at', Carbon::today())->sum('total_amount');
-    $todayProfit = Sale::whereDate('created_at', Carbon::today())->sum('profit');
-    $todayRealizedProfit = ProfitRealization::whereDate('payment_date', Carbon::today())->sum('profit_amount');
-    $todayExpenses = Expense::whereDate('expense_date', Carbon::today())->sum('amount');
-    
-    // This month's data
-    $monthSales = Sale::whereYear('created_at', Carbon::now()->year)
-        ->whereMonth('created_at', Carbon::now()->month)
-        ->sum('total_amount');
-    $monthProfit = Sale::whereYear('created_at', Carbon::now()->year)
-        ->whereMonth('created_at', Carbon::now()->month)
-        ->sum('profit');
-    $monthRealizedProfit = ProfitRealization::whereYear('payment_date', Carbon::now()->year)
-        ->whereMonth('payment_date', Carbon::now()->month)
-        ->sum('profit_amount');
-    $monthExpenses = Expense::whereYear('expense_date', Carbon::now()->year)
-        ->whereMonth('expense_date', Carbon::now()->month)
-        ->sum('amount');
-    
-    // Calculate cash in hand
-    $todayCashInHand = $todayRealizedProfit - $todayExpenses;
-    $monthCashInHand = $monthRealizedProfit - $monthExpenses;
-    
-    // Stock value
-        $totalStockValue = Product::all()->sum(function($product) {
+        // Get all users in this business
+        $businessUserIds = User::where('business_id', $businessId)->pluck('id');
+        
+        $totalManagers = User::role('manager')->where('business_id', $businessId)->count();
+        $totalSalesmen = User::role('salesman')->where('business_id', $businessId)->count();
+        
+        // Today's data - filtered by business users
+        $todaySales = Sale::whereIn('user_id', $businessUserIds)
+            ->whereDate('created_at', Carbon::today())
+            ->sum('total_amount');
+        $todayProfit = Sale::whereIn('user_id', $businessUserIds)
+            ->whereDate('created_at', Carbon::today())
+            ->sum('profit');
+        $todayPaid = Sale::whereIn('user_id', $businessUserIds)
+            ->whereDate('created_at', Carbon::today())
+            ->sum('paid_amount');
+        $todayDue = Sale::whereIn('user_id', $businessUserIds)
+            ->whereDate('created_at', Carbon::today())
+            ->sum('due_amount');
+        $todayExpenses = Expense::whereIn('user_id', $businessUserIds)
+            ->whereDate('expense_date', Carbon::today())
+            ->sum('amount');
+        
+        // This month's data - filtered by business users
+        $monthSales = Sale::whereIn('user_id', $businessUserIds)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->sum('total_amount');
+        $monthProfit = Sale::whereIn('user_id', $businessUserIds)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->sum('profit');
+        $monthPaid = Sale::whereIn('user_id', $businessUserIds)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->sum('paid_amount');
+        $monthDue = Sale::whereIn('user_id', $businessUserIds)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->sum('due_amount');
+        $monthExpenses = Expense::whereIn('user_id', $businessUserIds)
+            ->whereYear('expense_date', Carbon::now()->year)
+            ->whereMonth('expense_date', Carbon::now()->month)
+            ->sum('amount');
+        
+        // Calculate cash in hand (profit - expenses)
+        $todayCashInHand = $todayProfit - $todayExpenses;
+        $monthCashInHand = $monthProfit - $monthExpenses;
+        
+        // Stock value - all products (filtered by business)
+        $totalStockValue = Product::where('business_id', $businessId)->get()->sum(function($product) {
             return $product->current_stock * $product->purchase_price;
         });
         
-        // Customer dues
-        $totalDue = Sale::where('due_amount', '>', 0)->sum('due_amount');
-        $dueCustomers = Sale::where('due_amount', '>', 0)
+        // Customer dues - filtered by business users
+        $totalDue = Sale::whereIn('user_id', $businessUserIds)
+            ->where('due_amount', '>', 0)
+            ->sum('due_amount');
+        $dueCustomers = Sale::whereIn('user_id', $businessUserIds)
+            ->where('due_amount', '>', 0)
             ->with(['product', 'user'])
             ->orderBy('created_at', 'desc')
             ->get();
         
-        // Recent sales
-        $recentSales = Sale::with(['product', 'user'])->latest()->take(10)->get();
+        // Recent sales - filtered by business users
+        $recentSales = Sale::whereIn('user_id', $businessUserIds)
+            ->with(['product', 'user'])
+            ->latest()
+            ->take(10)
+            ->get();
 
         return view('owner.dashboard', compact(
             'totalManagers', 
             'totalSalesmen', 
             'todaySales', 
             'todayProfit',
-            'todayRealizedProfit',
+            'todayPaid',
+            'todayDue',
             'todayExpenses',
             'todayCashInHand',
             'monthSales',
             'monthProfit',
-            'monthRealizedProfit',
+            'monthPaid',
+            'monthDue',
             'monthExpenses',
             'monthCashInHand',
             'totalStockValue',
-            'totalDue', 
+            'totalDue',
             'dueCustomers',
             'recentSales'
         ));
@@ -80,7 +111,11 @@ class OwnerController extends Controller
     
     public function dueCustomers()
     {
-        $query = Sale::where('due_amount', '>', 0)
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = User::where('business_id', $businessId)->pluck('id');
+        
+        $query = Sale::whereIn('user_id', $businessUserIds)
+            ->where('due_amount', '>', 0)
             ->with(['product', 'user', 'profitRealizations']);
         
         // Search by phone or voucher
@@ -170,7 +205,10 @@ class OwnerController extends Controller
     
     public function allSales()
     {
-        $query = Sale::with(['product', 'user']);
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = User::where('business_id', $businessId)->pluck('id');
+        
+        $query = Sale::whereIn('user_id', $businessUserIds)->with(['product', 'user']);
         
         // Date filtering
         if (request('start_date')) {
@@ -189,7 +227,7 @@ class OwnerController extends Controller
         $sales = $query->orderBy('created_at', 'desc')->paginate(50)->withQueryString();
         
         // Calculate totals based on filtered results
-        $statsQuery = Sale::query();
+        $statsQuery = Sale::whereIn('user_id', $businessUserIds);
         if (request('start_date')) {
             $statsQuery->whereDate('created_at', '>=', request('start_date'));
         }

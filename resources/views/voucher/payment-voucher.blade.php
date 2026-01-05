@@ -1,3 +1,9 @@
+@php
+    $primaryColor = $template->primary_color ?? '#1e40af';
+    $secondaryColor = $template->secondary_color ?? '#3b82f6';
+    $fontSize = $template->font_size ?? '13px';
+    $pageMargin = $template->page_margin ?? '5mm';
+@endphp
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -13,14 +19,14 @@
             .no-print { display: none; }
             @page { 
                 size: A4;
-                margin: 8mm;
+                margin: {{ $pageMargin }};
             }
             .voucher {
                 box-shadow: none;
-                border: 2px solid #000;
+                border: 1px solid #000;
                 page-break-inside: avoid;
                 min-height: auto;
-                padding: 8mm;
+                padding: {{ $pageMargin }};
             }
             .watermark {
                 opacity: 0.08;
@@ -40,16 +46,17 @@
         body {
             font-family: 'Noto Sans Bengali', 'Kalpurush', Arial, sans-serif;
             background: #f5f5f5;
-            padding: 15px;
-            line-height: 1.6;
+            padding: 8px;
+            line-height: 1.4;
+            font-size: {{ $fontSize }};
         }
         .voucher {
             max-width: 210mm;
             margin: 0 auto;
             background: white;
-            padding: 10mm;
+            padding: 8mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border: 2px solid #333;
+            border: 1px solid #333;
             position: relative;
         }
         .watermark {
@@ -57,10 +64,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 120px;
+            font-size: 80px;
             font-weight: bold;
-            color: #10b981;
-            opacity: 0.05;
+            color: {{ $secondaryColor }};
+            opacity: 0.04;
             z-index: 0;
             pointer-events: none;
         }
@@ -70,14 +77,19 @@
         }
         .header {
             text-align: center;
-            border-bottom: 3px double #000;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+            border-bottom: 2px double #000;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        .company-logo {
+            max-width: 120px;
+            max-height: 80px;
+            margin-bottom: 8px;
         }
         .company-name {
-            font-size: 32px;
+            font-size: 22px;
             font-weight: bold;
-            color: #1e40af;
+            color: {{ $primaryColor }};
             margin-bottom: 8px;
             letter-spacing: 1px;
         }
@@ -87,60 +99,61 @@
             line-height: 1.8;
         }
         .header-text {
-            font-size: 13px;
+            font-size: 10px;
             font-style: italic;
             color: #6b7280;
-            margin-top: 8px;
+            margin-top: 4px;
             font-weight: 500;
         }
         .voucher-title {
             text-align: center;
-            font-size: 24px;
+            font-size: 15px;
             font-weight: bold;
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            background: linear-gradient(135deg, {{ $primaryColor }} 0%, {{ $secondaryColor }} 100%);
             color: white;
-            padding: 12px;
-            margin: 20px 0;
-            border-radius: 8px;
-            letter-spacing: 2px;
+            padding: 5px;
+            margin: 8px 0;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
         }
         .voucher-meta {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 25px;
-            padding: 12px;
-            background: #f9fafb;
-            border-left: 4px solid #10b981;
+            margin-bottom: 10px;
+            padding: 5px 8px;
+            background: #f0fdf4;
+            border-left: 3px solid {{ $secondaryColor }};
         }
         .voucher-number {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: bold;
-            color: #059669;
+            color: {{ $primaryColor }};
         }
         .voucher-date {
-            font-size: 14px;
+            font-size: 12px;
             color: #4b5563;
         }
         .section {
-            margin: 20px 0;
+            margin: 10px 0;
         }
         .section-title {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: bold;
             color: #1f2937;
-            border-bottom: 2px solid #10b981;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
+            border-bottom: 1px solid {{ $secondaryColor }};
+            padding-bottom: 4px;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.3px;
         }
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 10px 15px;
+            margin-bottom: 6px;
+            padding: 5px 8px;
             background: #f9fafb;
-            border-radius: 4px;
+            border-radius: 3px;
+            font-size: 12px;
         }
         .info-row:nth-child(even) {
             background: #f3f4f6;
@@ -148,7 +161,7 @@
         .info-label {
             font-weight: 600;
             color: #374151;
-            min-width: 180px;
+            min-width: 120px;
         }
         .info-value {
             color: #111827;
@@ -159,70 +172,71 @@
         .payment-box {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             color: white;
-            padding: 25px;
-            border-radius: 12px;
-            margin: 25px 0;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 12px 0;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(5, 150, 105, 0.3);
+            box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
         }
         .payment-label {
-            font-size: 16px;
+            font-size: 12px;
             opacity: 0.95;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-weight: 500;
         }
         .payment-amount {
-            font-size: 42px;
+            font-size: 24px;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
         .amount-words {
-            font-size: 14px;
-            margin-top: 12px;
-            padding-top: 12px;
+            font-size: 11px;
+            margin-top: 6px;
+            padding-top: 6px;
             border-top: 1px solid rgba(255,255,255,0.4);
             font-style: italic;
             opacity: 0.9;
         }
         .original-sale-box {
             background: #eff6ff;
-            border: 2px solid #3b82f6;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 20px 0;
+            border: 1px solid {{ $secondaryColor }};
+            border-radius: 4px;
+            padding: 8px;
+            margin: 10px 0;
+            font-size: 12px;
         }
         .balance-summary {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 25px 0;
-            padding: 20px;
+            gap: 8px;
+            margin: 12px 0;
+            padding: 10px;
             background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
-            border: 2px solid #f59e0b;
-            border-radius: 8px;
+            border: 1px solid {{ $secondaryColor }};
+            border-radius: 4px;
         }
         .balance-item {
             text-align: center;
-            padding: 10px;
+            padding: 6px;
         }
         .balance-label {
-            font-size: 12px;
+            font-size: 10px;
             color: #78350f;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-weight: 600;
         }
         .balance-value {
-            font-size: 20px;
+            font-size: 14px;
             font-weight: bold;
             color: #92400e;
         }
         .status-badge {
             display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 14px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: 600;
-            margin-top: 10px;
+            margin-top: 6px;
         }
         .status-paid {
             background: #d1fae5;
@@ -235,46 +249,46 @@
         .signature-section {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 60px;
-            margin-top: 40px;
-            padding-top: 15px;
+            gap: 40px;
+            margin-top: 25px;
+            padding-top: 10px;
         }
         .signature-box {
             text-align: center;
         }
         .signature-line {
-            border-top: 2px solid #000;
-            margin-top: 50px;
-            padding-top: 10px;
+            border-top: 1px solid #000;
+            margin-top: 30px;
+            padding-top: 6px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 11px;
             color: #374151;
         }
         .footer {
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 2px solid #e5e7eb;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #e5e7eb;
             text-align: center;
-            font-size: 11px;
+            font-size: 9px;
             color: #6b7280;
         }
         .footer-highlight {
-            margin-bottom: 10px;
-            font-size: 14px;
+            margin-bottom: 6px;
+            font-size: 11px;
             color: #1f2937;
             font-weight: 600;
         }
         .print-button {
             background: linear-gradient(135deg, #059669 0%, #10b981 100%);
             color: white;
-            padding: 14px 40px;
+            padding: 8px 20px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 5px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(5, 150, 105, 0.3);
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
             transition: all 0.3s;
         }
         .print-button:hover {
@@ -284,109 +298,6 @@
         }
     </style>
 </head>
-<body>
-    <div class="no-print" style="text-align: center; margin-bottom: 15px;">
-        <div style="display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap;">
-            <a href="{{ route(auth()->user()->getRoleNames()->first() . '.dashboard') }}" 
-               style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3); transition: all 0.3s; display: inline-block;"
-               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 8px rgba(37, 99, 235, 0.4)'"
-               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(37, 99, 235, 0.3)'">
-                🏠 ড্যাশবোর্ডে ফিরুন / Back to Dashboard
-            </a>
-            <button class="print-button" onclick="window.print()">🖨️ প্রিন্ট করুন / Print</button>
-        </div>
-    </div>
-
-    <div class="voucher">
-        <!-- Watermark -->
-        <div class="watermark">PAID</div>
-        
-        <div class="content">
-        }
-        .balance-label {
-            font-size: 12px;
-            color: #92400e;
-            margin-bottom: 5px;
-        }
-        .balance-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #78350f;
-        }
-        .signature-section {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 50px;
-            padding-top: 20px;
-        }
-        .signature-box {
-            text-align: center;
-            min-width: 180px;
-        }
-        .signature-line {
-            border-top: 2px solid #333;
-            margin-top: 60px;
-            padding-top: 8px;
-            font-weight: bold;
-        }
-        .footer {
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 2px solid #e5e7eb;
-            text-align: center;
-            font-size: 11px;
-            color: #6b7280;
-        }
-        .footer-note {
-            margin-bottom: 8px;
-            font-size: 13px;
-            color: #374151;
-        }
-        .print-button {
-            background: #2563eb;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-        .print-button:hover {
-            background: #1d4ed8;
-        }
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 80px;
-            color: rgba(5, 150, 105, 0.05);
-            font-weight: bold;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .content {
-            position: relative;
-            z-index: 1;
-        }
-    </style>
-</head>
-<body>
-    <div class="no-print" style="text-align: center;">
-        <button class="print-button" onclick="window.print()">🖨️ প্রিন্ট করুন</button>
-        <a href="{{ auth()->user()->hasRole('owner') ? route('owner.due-customers') : route('manager.due-customers') }}" 
-           style="display: inline-block; background: #6b7280; color: white; padding: 12px 30px; border-radius: 5px; text-decoration: none; margin-left: 10px;">
-            ← বকেয়া তালিকায় ফিরুন
-        </a>
-    </div>
-
-    <div class="page-container">
-        <div class="voucher">
-            <div class="watermark">PAID</div>
-            
-            <div class="content">
-        <!-- Header -->
         <div class="header">
             @if($template)
                 <div class="company-name">{{ $template->company_name }}</div>

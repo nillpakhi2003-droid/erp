@@ -39,9 +39,9 @@
             <div class="text-xs opacity-75 mt-1">(সব বিক্রয় সহ)</div>
         </div>
         <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-lg p-3 sm:p-6 text-white">
-            <div class="text-xs sm:text-sm opacity-90">নগদ লাভ</div>
-            <div class="text-xl sm:text-3xl font-bold">৳{{ number_format($realizedProfit, 2) }}</div>
-            <div class="text-xs opacity-75 mt-1">(প্রাপ্ত টাকার লাভ)</div>
+            <div class="text-xs sm:text-sm opacity-90">নগদ প্রাপ্তি</div>
+            <div class="text-xl sm:text-3xl font-bold">৳{{ number_format($totalPaid, 2) }}</div>
+            <div class="text-xs opacity-75 mt-1">(প্রাপ্ত টাকা)</div>
         </div>
         <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-lg p-3 sm:p-6 text-white">
             <div class="text-xs sm:text-sm opacity-90">মোট বকেয়া</div>
@@ -60,9 +60,9 @@
             <div class="text-xl sm:text-3xl font-bold">৳{{ number_format($totalSales, 2) }}</div>
         </div>
         <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-lg p-3 sm:p-6 text-white">
-            <div class="text-xs sm:text-sm opacity-90">নগদ লাভ</div>
-            <div class="text-xl sm:text-3xl font-bold">৳{{ number_format($realizedProfit, 2) }}</div>
-            <div class="text-xs opacity-75 mt-1">(প্রাপ্ত টাকার লাভ)</div>
+            <div class="text-xs sm:text-sm opacity-90">মোট লাভ</div>
+            <div class="text-xl sm:text-3xl font-bold">৳{{ number_format($totalProfit, 2) }}</div>
+            <div class="text-xs opacity-75 mt-1">(সব বিক্রয়ের লাভ)</div>
         </div>
     </div>
     @endif

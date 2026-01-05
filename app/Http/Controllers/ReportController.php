@@ -17,10 +17,13 @@ class ReportController extends Controller
 
     public function ownerReports(Request $request)
     {
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = \App\Models\User::where('business_id', $businessId)->pluck('id');
+        
         $dateFrom = $request->input('date_from', today()->toDateString());
         $dateTo = $request->input('date_to', today()->toDateString());
 
-        $sales = Sale::with(['product', 'user'])
+        $sales = Sale::whereIn('user_id', $businessUserIds)->with(['product', 'user'])
             ->whereBetween('created_at', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
             ->get();
 
@@ -31,29 +34,28 @@ class ReportController extends Controller
         $totalQuantity = $sales->sum('quantity');
 
         // Realized profit during this period (from ProfitRealization)
-        $realizedProfit = ProfitRealization::whereBetween('payment_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
+        $realizedProfit = ProfitRealization::whereHas('sale', fn($q) => $q->whereIn('user_id', $businessUserIds))->whereBetween('payment_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
             ->sum('profit_amount');
 
         // Due customers in the date range
-        $dueCustomers = Sale::where('due_amount', '>', 0)
+        $dueCustomers = Sale::whereIn('user_id', $businessUserIds)->where('due_amount', '>', 0)
             ->whereBetween('created_at', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
             ->with(['product', 'user'])
             ->get();
 
         // Due collection during this period (payments received in this period)
-        $dueCollection = ProfitRealization::whereBetween('payment_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
+        $dueCollection = ProfitRealization::whereHas('sale', fn($q) => $q->whereIn('user_id', $businessUserIds))->whereBetween('payment_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
             ->where('notes', '!=', 'Initial sale payment')
             ->sum('payment_amount');
 
         // Total expenses during this period
-        $totalExpenses = Expense::whereBetween('expense_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
+        $totalExpenses = Expense::whereIn('user_id', $businessUserIds)->whereBetween('expense_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
             ->sum('amount');
 
         return view('owner.reports', compact(
             'sales', 
             'totalSales', 
             'totalProfit',
-            'realizedProfit',
             'totalPaid',
             'totalDue',
             'totalQuantity',
@@ -67,10 +69,13 @@ class ReportController extends Controller
 
     public function managerReports(Request $request)
     {
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = \App\Models\User::where('business_id', $businessId)->pluck('id');
+        
         $dateFrom = $request->input('date_from', today()->toDateString());
         $dateTo = $request->input('date_to', today()->toDateString());
 
-        $sales = Sale::with(['product', 'user'])
+        $sales = Sale::whereIn('user_id', $businessUserIds)->with(['product', 'user'])
             ->whereBetween('created_at', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
             ->get();
 
@@ -80,18 +85,14 @@ class ReportController extends Controller
         $totalDue = $sales->sum('due_amount');
         $totalQuantity = $sales->sum('quantity');
 
-        // Realized profit during this period (from ProfitRealization)
-        $realizedProfit = ProfitRealization::whereBetween('payment_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
-            ->sum('profit_amount');
-
         // Due customers in the date range
-        $dueCustomers = Sale::where('due_amount', '>', 0)
+        $dueCustomers = Sale::whereIn('user_id', $businessUserIds)->where('due_amount', '>', 0)
             ->whereBetween('created_at', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
             ->with(['product', 'user'])
             ->get();
 
         // Due collection during this period (payments received in this period)
-        $dueCollection = ProfitRealization::whereBetween('payment_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
+        $dueCollection = ProfitRealization::whereHas('sale', fn($q) => $q->whereIn('user_id', $businessUserIds))->whereBetween('payment_date', [$dateFrom . ' 00:00:00', $dateTo . ' 23:59:59'])
             ->where('notes', '!=', 'Initial sale payment')
             ->sum('payment_amount');
 
@@ -99,7 +100,6 @@ class ReportController extends Controller
             'sales', 
             'totalSales', 
             'totalProfit',
-            'realizedProfit',
             'totalPaid',
             'totalDue',
             'totalQuantity',

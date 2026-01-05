@@ -29,11 +29,11 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div class="bg-white rounded-lg shadow p-6">
             <div class="text-sm text-gray-600">Total Sales</div>
-            <div class="text-3xl font-bold text-green-600">${{ number_format($totalSales, 2) }}</div>
+            <div class="text-3xl font-bold text-green-600">৳{{ number_format($totalSales, 2) }}</div>
         </div>
         <div class="bg-white rounded-lg shadow p-6">
             <div class="text-sm text-gray-600">Total Profit</div>
-            <div class="text-3xl font-bold text-blue-600">${{ number_format($totalProfit, 2) }}</div>
+            <div class="text-3xl font-bold text-blue-600">৳{{ number_format($totalProfit, 2) }}</div>
         </div>
         <div class="bg-white rounded-lg shadow p-6">
             <div class="text-sm text-gray-600">Total Quantity</div>
@@ -41,7 +41,7 @@
         </div>
         <div class="bg-white rounded-lg shadow p-6">
             <div class="text-sm text-gray-600">Stock Value</div>
-            <div class="text-3xl font-bold text-purple-600">${{ number_format($totalStockValue, 2) }}</div>
+            <div class="text-3xl font-bold text-purple-600">৳{{ number_format($totalStockValue, 2) }}</div>
         </div>
     </div>
 
@@ -64,8 +64,8 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $sale->product->name }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $sale->user->name }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $sale->quantity }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">${{ number_format($sale->total_amount, 2) }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">${{ number_format($sale->profit, 2) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">৳{{ number_format($sale->total_amount, 2) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">৳{{ number_format($sale->profit, 2) }}</td>
                 </tr>
                 @endforeach
             </tbody>

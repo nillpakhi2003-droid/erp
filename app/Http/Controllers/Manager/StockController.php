@@ -11,8 +11,9 @@ class StockController extends Controller
 {
     public function index()
     {
-        $products = Product::latest()->get();
-        $stockEntries = StockEntry::with(['product', 'user'])->latest()->paginate(15);
+        $businessId = auth()->user()->business_id;
+        $products = Product::where('business_id', $businessId)->latest()->get();
+        $stockEntries = StockEntry::whereHas('product', fn($q) => $q->where('business_id', $businessId))->with(['product', 'user'])->latest()->paginate(15);
         return view('manager.stock.index', compact('products', 'stockEntries'));
     }
 
@@ -20,19 +21,26 @@ class StockController extends Controller
     {
         // Check if creating a new product
         if ($request->has('create_new_product')) {
+            $businessId = auth()->user()->business_id;
+            
             $validated = $request->validate([
                 'new_product_name' => ['required', 'string', 'max:255'],
-                'new_product_sku' => ['required', 'string', 'max:255', 'unique:products,sku'],
+                'new_product_sku' => [
+                    'required', 
+                    'string', 
+                    'max:255',
+                    \Illuminate\Validation\Rule::unique('products', 'sku')->where(function ($query) use ($businessId) {
+                        return $query->where('business_id', $businessId);
+                    })
+                ],
                 'new_product_price' => ['required', 'numeric', 'min:0'],
                 'quantity' => ['required', 'integer', 'min:1'],
                 'purchase_price' => ['required', 'numeric', 'min:0'],
             ]);
 
             // Create new product
-            $product = Product::create([
-                'name' => $validated['new_product_name'],
-                'sku' => $validated['new_product_sku'],
-                'sell_price' => $validated['new_product_price'],
+        $product = Product::create([
+            'business_id' => auth()->user()->business_id,
                 'current_stock' => 0,
                 'purchase_price' => 0,
             ]);

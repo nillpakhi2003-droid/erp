@@ -10,16 +10,23 @@ class VoucherTemplate extends Model
     use HasFactory;
 
     protected $fillable = [
-        'owner_id',
+        'business_id',
         'company_name',
         'company_address',
         'company_phone',
         'header_text',
         'footer_text',
+        'primary_color',
+        'secondary_color',
+        'font_size',
+        'page_margin',
+        'logo_url',
+        'show_watermark',
+        'watermark_text',
     ];
 
-    public function owner()
+    public function business()
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $this->belongsTo(Business::class, 'business_id');
     }
 }

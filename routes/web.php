@@ -47,6 +47,16 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::resource('owners', SuperAdminOwnerController::class);
     Route::post('/owners/{owner}/toggle-due-system', [SuperAdminOwnerController::class, 'toggleDueSystem'])->name('owners.toggle-due-system');
     Route::get('/reports', [ReportController::class, 'superAdminReports'])->name('reports');
+    
+    // Business Management
+    Route::resource('businesses', \App\Http\Controllers\SuperAdmin\BusinessController::class);
+    Route::get('/businesses/{business}/edit-template', [\App\Http\Controllers\SuperAdmin\BusinessController::class, 'editTemplate'])->name('businesses.edit-template');
+    Route::put('/businesses/{business}/update-template', [\App\Http\Controllers\SuperAdmin\BusinessController::class, 'updateTemplate'])->name('businesses.update-template');
+    Route::get('/businesses/{business}/add-owner', [\App\Http\Controllers\SuperAdmin\BusinessController::class, 'addOwner'])->name('businesses.add-owner');
+    Route::post('/businesses/{business}/store-owner', [\App\Http\Controllers\SuperAdmin\BusinessController::class, 'storeOwner'])->name('businesses.store-owner');
+    
+    // Old voucher templates route (will be deprecated)
+    Route::resource('voucher-templates', \App\Http\Controllers\SuperAdmin\VoucherTemplateController::class);
 });
 
 // Owner Routes
@@ -87,6 +97,10 @@ Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')
     Route::get('/due-payments', [DuePaymentController::class, 'index'])->name('due-payments.index');
     Route::post('/due-payments/{sale}', [DuePaymentController::class, 'update'])->name('due-payments.update');
     Route::get('/reports', [ReportController::class, 'managerReports'])->name('reports');
+    
+    // Permanent Orders
+    Route::resource('permanent-orders', \App\Http\Controllers\Manager\PermanentOrderController::class);
+    Route::get('/permanent-orders/{permanentOrder}/voucher', [\App\Http\Controllers\Manager\PermanentOrderController::class, 'printVoucher'])->name('permanent-orders.voucher');
 });
 
 // Salesman Routes

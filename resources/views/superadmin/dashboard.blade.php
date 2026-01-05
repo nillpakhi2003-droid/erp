@@ -19,11 +19,11 @@
         </div>
         <div class="bg-white rounded-lg shadow p-6">
             <div class="text-sm text-gray-600">Total Sales</div>
-            <div class="text-3xl font-bold text-green-600">${{ number_format($totalSales, 2) }}</div>
+            <div class="text-3xl font-bold text-green-600">৳{{ number_format($totalSales, 2) }}</div>
         </div>
         <div class="bg-white rounded-lg shadow p-6">
             <div class="text-sm text-gray-600">Total Profit</div>
-            <div class="text-3xl font-bold text-blue-600">${{ number_format($totalProfit, 2) }}</div>
+            <div class="text-3xl font-bold text-blue-600">৳{{ number_format($totalProfit, 2) }}</div>
         </div>
     </div>
 
@@ -31,8 +31,14 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
             <div class="space-y-2">
+                <a href="{{ route('superadmin.businesses.index') }}" class="block bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-center">
+                    Manage Companies
+                </a>
                 <a href="{{ route('superadmin.owners.index') }}" class="block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center">
                     Manage Owners
+                </a>
+                <a href="{{ route('superadmin.voucher-templates.index') }}" class="block bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded text-center">
+                    Voucher Templates (Old)
                 </a>
                 <a href="{{ route('superadmin.reports') }}" class="block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-center">
                     View Reports
@@ -56,7 +62,7 @@
                         <tr class="border-b">
                             <td class="py-2 text-sm">{{ $sale->product->name }}</td>
                             <td class="py-2 text-sm">{{ $sale->user->name }}</td>
-                            <td class="py-2 text-sm">${{ number_format($sale->total_amount, 2) }}</td>
+                            <td class="py-2 text-sm">৳{{ number_format($sale->total_amount, 2) }}</td>
                         </tr>
                         @endforeach
                     </tbody>

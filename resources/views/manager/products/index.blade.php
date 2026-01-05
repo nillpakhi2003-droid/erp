@@ -28,8 +28,8 @@
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $product->sku }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $product->name }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${{ number_format($product->purchase_price, 2) }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${{ number_format($product->sell_price, 2) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">৳{{ number_format($product->purchase_price, 2) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">৳{{ number_format($product->sell_price, 2) }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $product->current_stock }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                         <a href="{{ route('manager.products.edit', $product) }}" class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>

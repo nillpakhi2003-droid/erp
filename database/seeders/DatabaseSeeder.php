@@ -8,6 +8,7 @@ use App\Models\Sale;
 use App\Models\StockEntry;
 use App\Models\VoucherTemplate;
 use App\Models\ProfitRealization;
+use App\Models\Business;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,44 +25,68 @@ class DatabaseSeeder extends Seeder
             'phone' => '1234567890',
             'password' => Hash::make('password'),
             'created_by' => null,
+            'business_id' => null,
         ]);
         $superAdmin->assignRole('superadmin');
 
-        // Create sample Owner
-        $owner = User::create([
+        // Create Business
+        $business = Business::create([
+            'name' => 'ABC ট্রেডিং কোম্পানি',
+            'email' => 'abc@trading.com',
+            'phone' => '01711111111',
+            'address' => 'মতিঝিল, ঢাকা-১০০০',
+            'is_active' => true,
+        ]);
+
+        // Create Owner 1 for the business
+        $owner1 = User::create([
             'name' => 'রহিম সাহেব',
             'phone' => '01711111111',
             'password' => Hash::make('password'),
-            'created_by' => $superAdmin->id,
+            'created_by' => null,
+            'business_id' => $business->id,
             'due_system_enabled' => true,
         ]);
-        $owner->assignRole('owner');
+        $owner1->assignRole('owner');
 
-        // Create Voucher Template for Owner
+        // Create Owner 2 for the same business
+        $owner2 = User::create([
+            'name' => 'করিম সাহেব',
+            'phone' => '01722222222',
+            'password' => Hash::make('password'),
+            'created_by' => null,
+            'business_id' => $business->id,
+            'due_system_enabled' => true,
+        ]);
+        $owner2->assignRole('owner');
+
+        // Create Voucher Template for the Business
         VoucherTemplate::create([
-            'owner_id' => $owner->id,
-            'company_name' => 'রহিম ট্রেডার্স',
+            'business_id' => $business->id,
+            'company_name' => 'ABC ট্রেডিং কোম্পানি',
             'company_address' => 'মতিঝিল, ঢাকা-১০০০',
             'company_phone' => '০১৭১১-১১১১১১',
             'header_text' => 'আপনার বিশ্বাসের ঠিকানা',
             'footer_text' => 'ধন্যবাদ। আবার আসবেন।',
         ]);
 
-        // Create sample Manager
+        // Create sample Manager for Owner 1
         $manager = User::create([
-            'name' => 'করিম ম্যানেজার',
-            'phone' => '01722222222',
+            'name' => 'মেহেদী হাসান',
+            'phone' => '01733333333',
             'password' => Hash::make('password'),
-            'created_by' => $owner->id,
+            'created_by' => $owner1->id,
+            'business_id' => $business->id,
         ]);
         $manager->assignRole('manager');
 
         // Create sample Salesman
         $salesman = User::create([
-            'name' => 'আলী সেলসম্যান',
-            'phone' => '01733333333',
+            'name' => 'রফিক সেলসম্যান',
+            'phone' => '01755555555',
             'password' => Hash::make('password'),
             'created_by' => $manager->id,
+            'business_id' => $business->id,
         ]);
         $salesman->assignRole('salesman');
 
@@ -71,6 +96,7 @@ class DatabaseSeeder extends Seeder
             'phone' => '01744444444',
             'password' => Hash::make('password'),
             'created_by' => $manager->id,
+            'business_id' => $business->id,
         ]);
         $salesman2->assignRole('salesman');
 
@@ -115,6 +141,7 @@ class DatabaseSeeder extends Seeder
 
         foreach ($products as $productData) {
             $product = Product::create([
+                'business_id' => $business->id,
                 'name' => $productData['name'],
                 'sku' => $productData['sku'],
                 'purchase_price' => $productData['purchase_price'],
@@ -341,5 +368,84 @@ class DatabaseSeeder extends Seeder
             'created_at' => now()->subDays(2)->setTime(9, 30, 0),
             'updated_at' => now()->subDays(2)->setTime(9, 30, 0),
         ]);
+        
+        // ==============================================
+        // Create Second Business for Testing Isolation
+        // ==============================================
+        
+        $business2 = Business::create([
+            'name' => 'XYZ ইলেকট্রনিক্স',
+            'email' => 'xyz@electronics.com',
+            'phone' => '01811111111',
+            'address' => 'গুলশান, ঢাকা-১২১২',
+            'is_active' => true,
+        ]);
+
+        // Create Owner for second business
+        $owner3 = User::create([
+            'name' => 'জামাল সাহেব',
+            'phone' => '01811111111',
+            'password' => Hash::make('password'),
+            'created_by' => null,
+            'business_id' => $business2->id,
+            'due_system_enabled' => true,
+        ]);
+        $owner3->assignRole('owner');
+        
+        VoucherTemplate::create([
+            'business_id' => $business2->id,
+            'company_name' => 'XYZ ইলেকট্রনিক্স',
+            'company_address' => 'গুলশান, ঢাকা-১২১২',
+            'company_phone' => '০১৮১১-১১১১১১',
+            'header_text' => 'প্রযুক্তির সেরা সমাধান',
+            'footer_text' => 'আপনার সেবায় আমরা।',
+        ]);
+        
+        // Create Manager for second business
+        $manager2 = User::create([
+            'name' => 'সাকিব ম্যানেজার',
+            'phone' => '01822222222',
+            'password' => Hash::make('password'),
+            'created_by' => $owner3->id,
+            'business_id' => $business2->id,
+        ]);
+        $manager2->assignRole('manager');
+        
+        // Create Products for second business
+        $product2_1 = Product::create([
+            'business_id' => $business2->id,
+            'name' => 'ডেল ল্যাপটপ',
+            'sku' => 'DELL-L15-001',
+            'purchase_price' => 45000,
+            'sell_price' => 55000,
+            'current_stock' => 0,
+        ]);
+        
+        StockEntry::create([
+            'product_id' => $product2_1->id,
+            'quantity' => 10,
+            'purchase_price' => 45000,
+            'added_by' => $manager2->id,
+        ]);
+        
+        $product2_1->update(['current_stock' => 10]);
+        
+        $product2_2 = Product::create([
+            'business_id' => $business2->id,
+            'name' => 'এইচপি প্রিন্টার',
+            'sku' => 'HP-PRN-001',
+            'purchase_price' => 12000,
+            'sell_price' => 15000,
+            'current_stock' => 0,
+        ]);
+        
+        StockEntry::create([
+            'product_id' => $product2_2->id,
+            'quantity' => 15,
+            'purchase_price' => 12000,
+            'added_by' => $manager2->id,
+        ]);
+        
+        $product2_2->update(['current_stock' => 15]);
     }
 }

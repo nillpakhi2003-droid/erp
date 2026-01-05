@@ -11,6 +11,41 @@
         </a>
     </div>
 
+    @if(session('owner_created'))
+        <div class="mb-6 bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-500 rounded-lg p-6 shadow-lg">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4 flex-1">
+                    <h3 class="text-lg font-bold text-green-900 mb-3">✅ নতুন মালিক সফলভাবে তৈরি হয়েছে!</h3>
+                    <div class="bg-white rounded-lg p-4 border border-green-300">
+                        <p class="text-sm font-semibold text-gray-700 mb-3">লগইন তথ্য (এই তথ্য সংরক্ষণ করুন):</p>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                                <span class="text-sm font-medium text-gray-600">নাম:</span>
+                                <span class="text-sm font-bold text-gray-900">{{ session('owner_created')['name'] }}</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded">
+                                <span class="text-sm font-medium text-gray-600">ফোন (Username):</span>
+                                <span class="text-lg font-mono font-bold text-blue-700">{{ session('owner_created')['phone'] }}</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-yellow-50 rounded">
+                                <span class="text-sm font-medium text-gray-600">পাসওয়ার্ড:</span>
+                                <span class="text-lg font-mono font-bold text-yellow-700">{{ session('owner_created')['password'] }}</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded">
+                            <p class="text-xs text-red-800 font-semibold">⚠️ গুরুত্বপূর্ণ: এই পাসওয়ার্ড শুধুমাত্র এখন একবার দেখানো হচ্ছে। অনুগ্রহ করে নোট করে রাখুন।</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full">
@@ -18,7 +53,9 @@
                     <tr>
                         <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">আইডি</th>
                         <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">নাম</th>
-                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">ফোন</th>
+                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">কোম্পানি</th>
+                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ফোন</th>
+                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">পাসওয়ার্ড</th>
                         <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">বকেয়া সিস্টেম</th>
                         <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">তারিখ</th>
                         <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">কাজ</th>
@@ -29,7 +66,19 @@
                     <tr>
                         <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm">{{ $owner->id }}</td>
                         <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium">{{ $owner->name }}</td>
-                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm hidden sm:table-cell">{{ $owner->phone }}</td>
+                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm hidden sm:table-cell">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-800">
+                                {{ $owner->business ? $owner->business->name : 'N/A' }}
+                            </span>
+                        </td>
+                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm">
+                            <span class="font-mono font-semibold text-gray-900">{{ $owner->phone }}</span>
+                        </td>
+                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm hidden lg:table-cell">
+                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">
+                                ডিফল্ট: password
+                            </span>
+                        </td>
                         <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
                             <form action="{{ route('superadmin.owners.toggle-due-system', $owner) }}" method="POST" class="inline">
                                 @csrf

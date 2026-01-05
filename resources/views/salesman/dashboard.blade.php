@@ -17,23 +17,10 @@
             <div class="text-xs sm:text-sm text-gray-600">আজকের বিক্রয়</div>
             <div class="text-2xl sm:text-3xl font-bold text-green-600">৳{{ number_format($todaySales, 2) }}</div>
         </div>
-        @if(auth()->user()->isDueSystemEnabled())
         <div class="bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 border-blue-500">
             <div class="text-xs sm:text-sm text-gray-600">আজকের মোট লাভ</div>
             <div class="text-xl sm:text-2xl font-bold text-blue-600">৳{{ number_format($todayProfit, 2) }}</div>
-            <div class="text-xs text-gray-500 mt-1">(সব বিক্রয়)</div>
         </div>
-        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-lg p-4 sm:p-6 text-white">
-            <div class="text-xs sm:text-sm opacity-90">আজকের নগদ লাভ</div>
-            <div class="text-xl sm:text-2xl font-bold">৳{{ number_format($todayRealizedProfit, 2) }}</div>
-            <div class="text-xs opacity-75 mt-1">(প্রাপ্ত টাকার লাভ)</div>
-        </div>
-        @else
-        <div class="bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 border-green-500">
-            <div class="text-xs sm:text-sm text-gray-600">আজকের মোট লাভ</div>
-            <div class="text-xl sm:text-2xl font-bold text-green-600">৳{{ number_format($todayProfit, 2) }}</div>
-        </div>
-        @endif
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">

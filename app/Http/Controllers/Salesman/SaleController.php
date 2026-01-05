@@ -13,14 +13,16 @@ class SaleController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $businessId = $user->business_id;
+        $businessUserIds = \App\Models\User::where('business_id', $businessId)->pluck('id');
         
         // If salesman, show only their sales
         if ($user->hasRole('salesman')) {
             $sales = Sale::where('user_id', $user->id)->with('product')->latest()->paginate(15);
         } 
-        // If manager or owner, show all sales
+        // If manager or owner, show all business sales
         else {
-            $sales = Sale::with('product')->latest()->paginate(15);
+            $sales = Sale::whereIn('user_id', $businessUserIds)->with('product')->latest()->paginate(15);
         }
         
         return view('salesman.sales.index', compact('sales'));
@@ -28,7 +30,8 @@ class SaleController extends Controller
 
     public function create()
     {
-        $products = Product::where('current_stock', '>', 0)->get();
+        $businessId = auth()->user()->business_id;
+        $products = Product::where('business_id', $businessId)->where('current_stock', '>', 0)->get();
         $baseRoute = $this->resolveBaseRoute();
         return view('salesman.sales.create', compact('products', 'baseRoute'));
     }

@@ -34,6 +34,7 @@ class ManagerController extends Controller
             'phone' => $validated['phone'],
             'password' => Hash::make($validated['password']),
             'created_by' => auth()->id(),
+            'business_id' => auth()->user()->business_id,
         ]);
 
         $manager->assignRole('manager');

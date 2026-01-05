@@ -19,6 +19,9 @@ A complete Enterprise Resource Planning (ERP) starter application built with Lar
 - ✅ Comprehensive reporting (today's sales, custom date ranges)
 - ✅ Real-time stock updates
 - ✅ Dashboard analytics for each role
+- ✅ **NEW:** Permanent Order System with Credit/Due Management
+- ✅ **NEW:** Voucher generation for permanent orders
+- ✅ **NEW:** Per-business credit limit controls by Super Admin
 
 ## Technology Stack
 
@@ -366,6 +369,26 @@ Potential features to add:
 - API for mobile apps
 - Real-time notifications
 - Audit logging
+
+## New Feature: Permanent Order System
+
+🎉 **Just Added!** A complete permanent order management system for businesses dealing with construction materials like rod, cement, etc.
+
+### Features:
+- ✅ Pre-order/permanent order creation for customers
+- ✅ Voucher generation with unique tracking numbers
+- ✅ Credit/Due management system
+- ✅ Per-business credit limits (controlled by Super Admin)
+- ✅ Partial payment tracking
+- ✅ Beautiful printable vouchers
+- ✅ Super Admin can enable/disable per company
+
+### Quick Start:
+1. **Super Admin**: Go to Businesses → Edit → Enable "স্থায়ী অর্ডার সিস্টেম"
+2. **Manager**: Access via "স্থায়ী অর্ডার" menu
+3. Create orders, track payments, print vouchers!
+
+📖 **Full Documentation**: See [PERMANENT_ORDER_SYSTEM.md](PERMANENT_ORDER_SYSTEM.md)
 
 ---
 

@@ -10,7 +10,10 @@ class ExpenseController extends Controller
 {
     public function index()
     {
-        $query = Expense::where('user_id', auth()->id());
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = \App\Models\User::where('business_id', $businessId)->pluck('id');
+        
+        $query = Expense::whereIn('user_id', $businessUserIds);
         
         // Date filtering
         if (request('start_date')) {
@@ -29,7 +32,7 @@ class ExpenseController extends Controller
         $expenses = $query->orderBy('expense_date', 'desc')->paginate(20)->withQueryString();
         
         // Calculate totals
-        $statsQuery = Expense::where('user_id', auth()->id());
+        $statsQuery = Expense::whereIn('user_id', $businessUserIds);
         if (request('start_date')) {
             $statsQuery->whereDate('expense_date', '>=', request('start_date'));
         }
@@ -71,8 +74,11 @@ class ExpenseController extends Controller
 
     public function edit(Expense $expense)
     {
-        // Make sure owner can only edit their own expenses
-        if ($expense->user_id !== auth()->id()) {
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = \App\Models\User::where('business_id', $businessId)->pluck('id');
+        
+        // Make sure owner can only edit their business expenses
+        if (!$businessUserIds->contains($expense->user_id)) {
             abort(403);
         }
 
@@ -82,8 +88,11 @@ class ExpenseController extends Controller
 
     public function update(Request $request, Expense $expense)
     {
-        // Make sure owner can only update their own expenses
-        if ($expense->user_id !== auth()->id()) {
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = \App\Models\User::where('business_id', $businessId)->pluck('id');
+        
+        // Make sure owner can only update their business expenses
+        if (!$businessUserIds->contains($expense->user_id)) {
             abort(403);
         }
 

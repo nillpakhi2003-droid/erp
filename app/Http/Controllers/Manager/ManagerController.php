@@ -13,44 +13,53 @@ class ManagerController extends Controller
 {
     public function dashboard()
     {
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = User::where('business_id', $businessId)->pluck('id');
+        
         $totalSalesmen = User::role('salesman')->where('created_by', auth()->id())->count();
-        $totalProducts = Product::count();
+        $totalProducts = Product::where('business_id', $businessId)->count();
         
         // Today's data
-        $todaySales = Sale::whereDate('created_at', Carbon::today())->sum('total_amount');
-        $todayProfit = Sale::whereDate('created_at', Carbon::today())->sum('profit');
-        $todayRealizedProfit = ProfitRealization::whereDate('payment_date', Carbon::today())->sum('profit_amount');
+        $todaySales = Sale::whereIn('user_id', $businessUserIds)->whereDate('created_at', Carbon::today())->sum('total_amount');
+        $todayProfit = Sale::whereIn('user_id', $businessUserIds)->whereDate('created_at', Carbon::today())->sum('profit');
+        $todayPaid = Sale::whereIn('user_id', $businessUserIds)->whereDate('created_at', Carbon::today())->sum('paid_amount');
+        $todayDue = Sale::whereIn('user_id', $businessUserIds)->whereDate('created_at', Carbon::today())->sum('due_amount');
         
         // This month's data
-        $monthSales = Sale::whereYear('created_at', Carbon::now()->year)
+        $monthSales = Sale::whereIn('user_id', $businessUserIds)->whereYear('created_at', Carbon::now()->year)
             ->whereMonth('created_at', Carbon::now()->month)
             ->sum('total_amount');
-        $monthProfit = Sale::whereYear('created_at', Carbon::now()->year)
+        $monthProfit = Sale::whereIn('user_id', $businessUserIds)->whereYear('created_at', Carbon::now()->year)
             ->whereMonth('created_at', Carbon::now()->month)
             ->sum('profit');
-        $monthRealizedProfit = ProfitRealization::whereYear('payment_date', Carbon::now()->year)
-            ->whereMonth('payment_date', Carbon::now()->month)
-            ->sum('profit_amount');
+        $monthPaid = Sale::whereIn('user_id', $businessUserIds)->whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->sum('paid_amount');
+        $monthDue = Sale::whereIn('user_id', $businessUserIds)->whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->sum('due_amount');
         
         // Customer dues
-        $totalDue = Sale::where('due_amount', '>', 0)->sum('due_amount');
-        $dueCustomers = Sale::where('due_amount', '>', 0)
+        $totalDue = Sale::whereIn('user_id', $businessUserIds)->where('due_amount', '>', 0)->sum('due_amount');
+        $dueCustomers = Sale::whereIn('user_id', $businessUserIds)->where('due_amount', '>', 0)
             ->with(['product', 'user'])
             ->orderBy('created_at', 'desc')
             ->get();
         
         // Recent sales
-        $recentSales = Sale::with(['product', 'user'])->latest()->take(10)->get();
+        $recentSales = Sale::whereIn('user_id', $businessUserIds)->with(['product', 'user'])->latest()->take(10)->get();
 
         return view('manager.dashboard', compact(
             'totalSalesmen', 
             'totalProducts',
             'todaySales', 
             'todayProfit',
-            'todayRealizedProfit',
+            'todayPaid',
+            'todayDue',
             'monthSales',
             'monthProfit',
-            'monthRealizedProfit',
+            'monthPaid',
+            'monthDue',
             'totalDue', 
             'dueCustomers',
             'recentSales'
@@ -59,7 +68,10 @@ class ManagerController extends Controller
     
     public function dueCustomers()
     {
-        $query = Sale::where('due_amount', '>', 0)
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = User::where('business_id', $businessId)->pluck('id');
+        
+        $query = Sale::whereIn('user_id', $businessUserIds)->where('due_amount', '>', 0)
             ->with(['product', 'user', 'profitRealizations']);
         
         // Search by phone or voucher
@@ -80,14 +92,30 @@ class ManagerController extends Controller
     
     public function recordPayment($saleId)
     {
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = User::where('business_id', $businessId)->pluck('id');
+        
         $sale = Sale::findOrFail($saleId);
+        
+        // Ensure sale belongs to the same business
+        if (!$businessUserIds->contains($sale->user_id)) {
+            abort(403, 'Unauthorized access to sale from different business.');
+        }
         
         return view('manager.record-payment', compact('sale'));
     }
     
     public function storePayment($saleId)
     {
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = User::where('business_id', $businessId)->pluck('id');
+        
         $sale = Sale::findOrFail($saleId);
+        
+        // Ensure sale belongs to the same business
+        if (!$businessUserIds->contains($sale->user_id)) {
+            abort(403, 'Unauthorized access to sale from different business.');
+        }
         
         $validated = request()->validate([
             'payment_amount' => 'required|numeric|min:0.01|max:' . $sale->due_amount,

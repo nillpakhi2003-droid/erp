@@ -5,6 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'ইআরপি সিস্টেম')</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    @php
+        $shopSetting = null;
+        if (auth()->check()) {
+            if (auth()->user()->isOwner()) {
+                $shopSetting = auth()->user()->shopSetting;
+            } elseif (auth()->user()->isManager() && auth()->user()->creator) {
+                $shopSetting = auth()->user()->creator->shopSetting;
+            } elseif (auth()->user()->isSalesman() && auth()->user()->creator && auth()->user()->creator->creator) {
+                $shopSetting = auth()->user()->creator->creator->shopSetting;
+            }
+        }
+    @endphp
+    
+    @if($shopSetting)
+    <style>
+        :root {
+            --primary-color: {{ $shopSetting->primary_color }};
+            --secondary-color: {{ $shopSetting->secondary_color }};
+            --accent-color: {{ $shopSetting->accent_color }};
+            --text-color: {{ $shopSetting->text_color }};
+        }
+        
+        body {
+            font-family: {{ $shopSetting->font_family }}, sans-serif;
+        }
+        
+        /* Apply custom colors */
+        .bg-blue-500, .bg-blue-600 { background-color: var(--primary-color) !important; }
+        .bg-green-500, .bg-green-600 { background-color: var(--secondary-color) !important; }
+        .bg-orange-500, .bg-orange-600, .bg-yellow-500 { background-color: var(--accent-color) !important; }
+        .text-blue-600 { color: var(--primary-color) !important; }
+        .text-green-600 { color: var(--secondary-color) !important; }
+        .border-blue-500 { border-color: var(--primary-color) !important; }
+        .border-green-500 { border-color: var(--secondary-color) !important; }
+        
+        {{ $shopSetting->custom_css }}
+    </style>
+    @endif
 </head>
 <body class="bg-gray-100">
     <nav class="bg-white shadow-lg">
