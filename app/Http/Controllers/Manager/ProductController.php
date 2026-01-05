@@ -42,7 +42,8 @@ class ProductController extends Controller
         $validated['business_id'] = $businessId;
         Product::create($validated);
 
-        return redirect()->route('manager.products.index')->with('success', 'Product created successfully.');
+        $routePrefix = auth()->user()->hasRole('owner') ? 'owner' : 'manager';
+        return redirect()->route($routePrefix . '.products.index')->with('success', 'Product created successfully.');
     }
 
     public function edit(Product $product)
@@ -80,7 +81,8 @@ class ProductController extends Controller
 
         $product->update($validated);
 
-        return redirect()->route('manager.products.index')->with('success', 'Product updated successfully.');
+        $routePrefix = auth()->user()->hasRole('owner') ? 'owner' : 'manager';
+        return redirect()->route($routePrefix . '.products.index')->with('success', 'Product updated successfully.');
     }
 
     public function destroy(Product $product)
@@ -100,7 +102,8 @@ class ProductController extends Controller
         }
         
         $product->delete();
-        return redirect()->route('manager.products.index')->with('success', 'Product deleted successfully.');
+        $routePrefix = auth()->user()->hasRole('owner') ? 'owner' : 'manager';
+        return redirect()->route($routePrefix . '.products.index')->with('success', 'Product deleted successfully.');
     }
 
     /**

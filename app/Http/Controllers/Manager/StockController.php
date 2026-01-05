@@ -56,7 +56,8 @@ class StockController extends Controller
                 auth()->id()
             );
 
-            return redirect()->route('manager.stock.index')->with('success', 'নতুন পণ্য তৈরি এবং স্টক যোগ করা হয়েছে।');
+            $routePrefix = auth()->user()->hasRole('owner') ? 'owner' : 'manager';
+            return redirect()->route($routePrefix . '.stock.index')->with('success', 'নতুন পণ্য তৈরি এবং স্টক যোগ করা হয়েছে।');
         }
 
         // Existing product stock addition
@@ -73,7 +74,8 @@ class StockController extends Controller
             auth()->id()
         );
 
-        return redirect()->route('manager.stock.index')->with('success', 'স্টক সফলভাবে যোগ করা হয়েছে।');
+        $routePrefix = auth()->user()->hasRole('owner') ? 'owner' : 'manager';
+        return redirect()->route($routePrefix . '.stock.index')->with('success', 'স্টক সফলভাবে যোগ করা হয়েছে।');
     }
 
     /**
