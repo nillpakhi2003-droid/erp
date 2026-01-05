@@ -1,20 +1,31 @@
-/vendor/
-/node_modules/
-/public/hot
-/public/storage
-/storage/*.key
-/storage/app/*
-!/storage/app/.gitignore
-/storage/framework/*
-!/storage/framework/.gitignore
-/storage/logs/*
-!/storage/logs/.gitignore
+# Environment
 .env
-.env.backup
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
+.env.*
+
+# Dependencies
+node_modules/
+vendor/
+
+# Laravel runtime
+bootstrap/cache/*
+!bootstrap/cache/.gitignore
+
+storage/*
+!storage/app/.gitignore
+!storage/framework/.gitignore
+!storage/logs/.gitignore
+
+# Vite / frontend build
+public/build/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Logs
 npm-debug.log
 yarn-error.log
-/.idea
-/.vscode
+
+# Sensitive
+CREDENTIALS.md
