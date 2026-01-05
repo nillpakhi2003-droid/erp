@@ -39,8 +39,11 @@ class StockController extends Controller
             ]);
 
             // Create new product
-        $product = Product::create([
-            'business_id' => auth()->user()->business_id,
+            $product = Product::create([
+                'business_id' => auth()->user()->business_id,
+                'name' => $validated['new_product_name'],
+                'sku' => $validated['new_product_sku'],
+                'sell_price' => $validated['new_product_price'],
                 'current_stock' => 0,
                 'purchase_price' => 0,
             ]);

@@ -11,7 +11,17 @@ class DuePaymentController extends Controller
 {
     public function index()
     {
+        // Check if due system is enabled
+        if (!auth()->user()->isDueSystemEnabled()) {
+            return redirect()->route('manager.dashboard')
+                ->with('error', 'বাকি সিস্টেম বন্ধ আছে');
+        }
+
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = \App\Models\User::where('business_id', $businessId)->pluck('id');
+
         $dueSales = Sale::where('due_amount', '>', 0)
+            ->whereIn('user_id', $businessUserIds)
             ->with(['product', 'user'])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -21,6 +31,19 @@ class DuePaymentController extends Controller
 
     public function update(Request $request, Sale $sale)
     {
+        // Check if due system is enabled
+        if (!auth()->user()->isDueSystemEnabled()) {
+            return redirect()->back()->with('error', 'বাকি সিস্টেম বন্ধ আছে');
+        }
+
+        // Check if sale belongs to same business
+        $businessId = auth()->user()->business_id;
+        $businessUserIds = \App\Models\User::where('business_id', $businessId)->pluck('id');
+        
+        if (!$businessUserIds->contains($sale->user_id)) {
+            abort(403, 'Unauthorized access to sale from different business.');
+        }
+
         $request->validate([
             'payment_amount' => 'required|numeric|min:0|max:' . $sale->due_amount,
         ]);

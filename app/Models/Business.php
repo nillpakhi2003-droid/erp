@@ -13,16 +13,10 @@ class Business extends Model
         'phone',
         'address',
         'is_active',
-        'enable_permanent_orders',
-        'enable_credit_system',
-        'credit_limit',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
-        'enable_permanent_orders' => 'boolean',
-        'enable_credit_system' => 'boolean',
-        'credit_limit' => 'decimal:2',
     ];
 
     public function owners(): HasMany
@@ -38,10 +32,5 @@ class Business extends Model
     public function voucherTemplate()
     {
         return $this->hasOne(VoucherTemplate::class, 'business_id');
-    }
-
-    public function permanentOrders(): HasMany
-    {
-        return $this->hasMany(PermanentOrder::class, 'business_id');
     }
 }

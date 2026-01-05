@@ -30,7 +30,8 @@ Route::get('/', function () {
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('login', [AuthenticatedSessionController::class, 'store'])
+        ->middleware('throttle:5,1'); // 5 attempts per minute
 });
 
 Route::middleware('auth')->group(function () {
@@ -97,10 +98,6 @@ Route::middleware(['auth', 'role:manager'])->prefix('manager')->name('manager.')
     Route::get('/due-payments', [DuePaymentController::class, 'index'])->name('due-payments.index');
     Route::post('/due-payments/{sale}', [DuePaymentController::class, 'update'])->name('due-payments.update');
     Route::get('/reports', [ReportController::class, 'managerReports'])->name('reports');
-    
-    // Permanent Orders
-    Route::resource('permanent-orders', \App\Http\Controllers\Manager\PermanentOrderController::class);
-    Route::get('/permanent-orders/{permanentOrder}/voucher', [\App\Http\Controllers\Manager\PermanentOrderController::class, 'printVoucher'])->name('permanent-orders.voucher');
 });
 
 // Salesman Routes

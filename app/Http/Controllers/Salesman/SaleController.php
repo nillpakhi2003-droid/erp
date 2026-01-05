@@ -38,6 +38,11 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
+        // Check if due system is enabled for this user
+        if ($request->has('is_credit') && $request->is_credit && !auth()->user()->isDueSystemEnabled()) {
+            return back()->withErrors(['is_credit' => 'বাকি সিস্টেম বন্ধ আছে'])->withInput();
+        }
+
         // Base validation rules
         $rules = [
             'product_id' => ['required', 'exists:products,id'],
@@ -76,8 +81,8 @@ class SaleController extends Controller
             return back()->withErrors(['paid_amount' => 'পরিশোধিত টাকা মোট টাকার চেয়ে বেশি হতে পারে না'])->withInput();
         }
 
-        // Generate voucher number
-        $voucherNumber = 'V-' . date('Ymd') . '-' . str_pad(Sale::whereDate('created_at', today())->count() + 1, 4, '0', STR_PAD_LEFT);
+        // Generate unique voucher number with microseconds for uniqueness
+        $voucherNumber = 'V-' . date('YmdHis') . '-' . substr(uniqid(), -4);
 
         $sale = Sale::create([
             'product_id' => $validated['product_id'],

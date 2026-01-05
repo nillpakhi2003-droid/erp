@@ -110,43 +110,6 @@
                         </label>
                     </div>
 
-                    <!-- Permanent Orders Settings -->
-                    <div class="pt-6 border-t">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">স্থায়ী অর্ডার সেটিংস</h3>
-                        <div class="space-y-4 bg-gray-50 p-4 rounded-lg">
-                            <div>
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="enable_permanent_orders" value="1" {{ old('enable_permanent_orders', $business->enable_permanent_orders) ? 'checked' : '' }}
-                                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                    <span class="ml-2 text-sm font-medium text-gray-700">স্থায়ী অর্ডার সিস্টেম চালু করুন</span>
-                                </label>
-                                <p class="ml-6 mt-1 text-xs text-gray-500">গ্রাহকরা রড, সিমেন্ট ইত্যাদির জন্য স্থায়ী অর্ডার দিতে পারবে</p>
-                            </div>
-
-                            <div>
-                                <label class="flex items-center">
-                                    <input type="checkbox" name="enable_credit_system" value="1" {{ old('enable_credit_system', $business->enable_credit_system) ? 'checked' : '' }}
-                                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                    <span class="ml-2 text-sm font-medium text-gray-700">ক্রেডিট/বাকি সিস্টেম চালু করুন</span>
-                                </label>
-                                <p class="ml-6 mt-1 text-xs text-gray-500">স্থায়ী অর্ডারে বাকিতে পণ্য দেওয়া যাবে</p>
-                            </div>
-
-                            <div>
-                                <label for="credit_limit" class="block text-sm font-medium text-gray-700 mb-2">
-                                    ক্রেডিট লিমিট (৳)
-                                </label>
-                                <input type="number" step="0.01" name="credit_limit" id="credit_limit" value="{{ old('credit_limit', $business->credit_limit) }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('credit_limit') border-red-500 @enderror"
-                                       placeholder="যেমন: 100000">
-                                <p class="mt-1 text-xs text-gray-500">প্রতি গ্রাহকের সর্বোচ্চ বাকির পরিমাণ (খালি রাখলে কোন লিমিট থাকবে না)</p>
-                                @error('credit_limit')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Owners List -->
                     <div class="pt-6 border-t">
                         <div class="flex items-center justify-between mb-4">

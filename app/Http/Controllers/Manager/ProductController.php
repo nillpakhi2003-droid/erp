@@ -89,6 +89,15 @@ class ProductController extends Controller
             abort(403, 'Unauthorized access to product from different business.');
         }
         
+        // Check if product has sales or stock
+        if ($product->sales()->exists()) {
+            return redirect()->back()->with('error', 'এই পণ্যের বিক্রয় রেকর্ড আছে। ডিলিট করা যাবে না।');
+        }
+        
+        if ($product->current_stock > 0) {
+            return redirect()->back()->with('error', 'পণ্যে স্টক আছে। প্রথমে স্টক শূন্য করুন।');
+        }
+        
         $product->delete();
         return redirect()->route('manager.products.index')->with('success', 'Product deleted successfully.');
     }

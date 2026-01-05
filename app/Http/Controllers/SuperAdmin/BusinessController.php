@@ -75,9 +75,6 @@ class BusinessController extends Controller
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'is_active' => 'boolean',
-            'enable_permanent_orders' => 'boolean',
-            'enable_credit_system' => 'boolean',
-            'credit_limit' => 'nullable|numeric|min:0',
         ]);
 
         $business->update($validated);

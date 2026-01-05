@@ -3,9 +3,18 @@
 @section('title', 'লগইন - ইআরপি সিস্টেম')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center px-4">
-    <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-        <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">ইআরপি সিস্টেমে লগইন করুন</h2>
+<div class="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-xl p-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="mb-4">
+                <svg class="mx-auto h-16 w-16 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">ইআরপি সিস্টেম</h2>
+            <p class="text-sm text-gray-600 leading-relaxed">আপনার ব্যবসার সকল হিসাব নিকাশ রাখুন<br>নিরাপদ এবং সুরক্ষিত মাধ্যমে</p>
+        </div>
         
         <form method="POST" action="{{ route('login') }}" id="loginForm">
             @csrf
@@ -50,40 +59,6 @@
                 </button>
             </div>
         </form>
-
-        <div class="mt-8">
-            <p class="font-semibold text-center mb-3 text-gray-700">ডেমো অ্যাকাউন্ট (ক্লিক করুন)</p>
-            <div class="grid grid-cols-1 gap-2">
-                <button onclick="fillLogin('1234567890', 'password')" class="bg-purple-100 hover:bg-purple-200 text-purple-800 font-semibold py-2 px-4 rounded text-sm transition">
-                    🔐 Super Admin
-                </button>
-                <button onclick="fillLogin('01711111111', 'password')" class="bg-green-100 hover:bg-green-200 text-green-800 font-semibold py-2 px-4 rounded text-sm transition">
-                    👨‍💼 Owner (রহিম সাহেব)
-                </button>
-                <button onclick="fillLogin('01722222222', 'password')" class="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-4 rounded text-sm transition">
-                    📊 Manager (করিম ম্যানেজার)
-                </button>
-                <button onclick="fillLogin('01733333333', 'password')" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-semibold py-2 px-4 rounded text-sm transition">
-                    🛍️ Salesman 1 (আলী সেলসম্যান)
-                </button>
-                <button onclick="fillLogin('01744444444', 'password')" class="bg-orange-100 hover:bg-orange-200 text-orange-800 font-semibold py-2 px-4 rounded text-sm transition">
-                    🛍️ Salesman 2 (হাসান সেলসম্যান)
-                </button>
-            </div>
-        </div>
-
-        <div class="mt-6 text-center text-xs text-gray-500">
-            <p>All passwords: <strong>password</strong></p>
-        </div>
     </div>
 </div>
-
-<script>
-function fillLogin(phone, password) {
-    document.getElementById('phone').value = phone;
-    document.getElementById('password').value = password;
-    // Optional: Auto-submit after filling
-    // document.getElementById('loginForm').submit();
-}
-</script>
 @endsection

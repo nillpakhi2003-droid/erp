@@ -49,6 +49,9 @@ class Product extends Model
 
     public function reduceStock(int $quantity): void
     {
+        if ($this->current_stock < $quantity) {
+            throw new \Exception('পর্যাপ্ত স্টক নেই। বর্তমান স্টক: ' . $this->current_stock);
+        }
         $this->decrement('current_stock', $quantity);
     }
 
