@@ -43,7 +43,7 @@ class ProductController extends Controller
         Product::create($validated);
 
         $routePrefix = auth()->user()->hasRole('owner') ? 'owner' : 'manager';
-        return redirect()->route($routePrefix . '.products.index')->with('success', 'Product created successfully.');
+        return redirect()->route($routePrefix . '.products.index')->with('success', 'পণ্য সফলভাবে তৈরি হয়েছে। এখন স্টক পেজ থেকে স্টক যোগ করুন।');
     }
 
     public function edit(Product $product)
@@ -77,12 +77,34 @@ class ProductController extends Controller
             ],
             'purchase_price' => ['required', 'numeric', 'min:0'],
             'sell_price' => ['required', 'numeric', 'min:0'],
+            'add_stock' => ['nullable', 'numeric', 'min:0'],
         ]);
 
-        $product->update($validated);
+        // Update product details
+        $product->update([
+            'name' => $validated['name'],
+            'sku' => $validated['sku'],
+            'purchase_price' => $validated['purchase_price'],
+            'sell_price' => $validated['sell_price'],
+        ]);
+
+        // If owner adds stock, create a stock entry and update current_stock
+        if (auth()->user()->hasRole('owner') && !empty($validated['add_stock']) && $validated['add_stock'] > 0) {
+            // Create stock entry
+            \App\Models\StockEntry::create([
+                'product_id' => $product->id,
+                'quantity' => $validated['add_stock'],
+                'purchase_price' => $validated['purchase_price'],
+                'added_by' => auth()->id(),
+                'business_id' => $businessId,
+            ]);
+
+            // Update current stock
+            $product->increment('current_stock', $validated['add_stock']);
+        }
 
         $routePrefix = auth()->user()->hasRole('owner') ? 'owner' : 'manager';
-        return redirect()->route($routePrefix . '.products.index')->with('success', 'Product updated successfully.');
+        return redirect()->route($routePrefix . '.products.index')->with('success', 'পণ্য সফলভাবে আপডেট হয়েছে।');
     }
 
     public function destroy(Product $product)
