@@ -118,6 +118,8 @@ class BusinessController extends Controller
             'watermark_text' => 'nullable|string|max:50',
         ]);
 
+        // Ensure watermark_text has a default value if not provided
+        $validated['watermark_text'] = $validated['watermark_text'] ?? '';
         $validated['business_id'] = $business->id;
 
         if ($business->voucherTemplate) {
