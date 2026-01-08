@@ -37,6 +37,8 @@ class StockController extends Controller
                 'new_product_price' => ['required', 'numeric', 'min:0'],
                 'quantity' => ['required', 'integer', 'min:1'],
                 'purchase_price' => ['required', 'numeric', 'min:0'],
+                'supplier_name' => ['nullable', 'string', 'max:255'],
+                'supplier_phone' => ['nullable', 'string', 'max:15'],
             ]);
 
             // Create new product
@@ -45,16 +47,20 @@ class StockController extends Controller
                 'name' => $validated['new_product_name'],
                 'sku' => $validated['new_product_sku'],
                 'sell_price' => $validated['new_product_price'],
-                'current_stock' => 0,
-                'purchase_price' => 0,
+                'current_stock' => $validated['quantity'],
+                'purchase_price' => $validated['purchase_price'],
             ]);
 
-            // Add stock
-            $product->addStock(
-                $validated['quantity'],
-                $validated['purchase_price'],
-                auth()->id()
-            );
+            // Create stock entry with supplier information
+            StockEntry::create([
+                'product_id' => $product->id,
+                'quantity' => $validated['quantity'],
+                'purchase_price' => $validated['purchase_price'],
+                'added_by' => auth()->id(),
+                'business_id' => $businessId,
+                'supplier_name' => $validated['supplier_name'] ?? null,
+                'supplier_phone' => $validated['supplier_phone'] ?? null,
+            ]);
 
             $routePrefix = auth()->user()->hasRole('owner') ? 'owner' : 'manager';
             return redirect()->route($routePrefix . '.stock.index')->with('success', 'নতুন পণ্য তৈরি এবং স্টক যোগ করা হয়েছে।');

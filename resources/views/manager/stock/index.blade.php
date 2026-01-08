@@ -100,7 +100,7 @@
             @csrf
             <input type="hidden" name="create_new_product" value="1">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label for="new_product_name" class="block text-gray-700 text-sm font-bold mb-2">পণ্যের নাম *</label>
                     <input type="text" name="new_product_name" id="new_product_name" value="{{ old('new_product_name') }}" class="shadow border rounded w-full py-2 px-3 text-gray-700 @error('new_product_name') border-red-500 @enderror">
@@ -116,17 +116,9 @@
                         <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-
-                <div>
-                    <label for="new_product_price" class="block text-gray-700 text-sm font-bold mb-2">বিক্রয়মূল্য (৳) *</label>
-                    <input type="number" step="0.01" name="new_product_price" id="new_product_price" value="{{ old('new_product_price') }}" class="shadow border rounded w-full py-2 px-3 text-gray-700 @error('new_product_price') border-red-500 @enderror">
-                    @error('new_product_price')
-                        <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 <div>
                     <label for="new_quantity" class="block text-gray-700 text-sm font-bold mb-2">পরিমাণ *</label>
                     <input type="number" name="quantity" id="new_quantity" value="{{ old('quantity') }}" class="shadow border rounded w-full py-2 px-3 text-gray-700 @error('quantity') border-red-500 @enderror">
@@ -143,10 +135,30 @@
                     @enderror
                 </div>
 
+                <div>
+                    <label for="new_product_price" class="block text-gray-700 text-sm font-bold mb-2">বিক্রয়মূল্য (৳) *</label>
+                    <input type="number" step="0.01" name="new_product_price" id="new_product_price" value="{{ old('new_product_price') }}" class="shadow border rounded w-full py-2 px-3 text-gray-700 @error('new_product_price') border-red-500 @enderror">
+                    @error('new_product_price')
+                        <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="flex items-end">
                     <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full">
                         পণ্য তৈরি ও স্টক যোগ করুন
                     </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="new_supplier_name" class="block text-gray-700 text-sm font-bold mb-2">সরবরাহকারীর নাম (ঐচ্ছিক)</label>
+                    <input type="text" name="supplier_name" id="new_supplier_name" value="{{ old('supplier_name') }}" class="shadow border rounded w-full py-2 px-3 text-gray-700" placeholder="সরবরাহকারীর নাম">
+                </div>
+
+                <div>
+                    <label for="new_supplier_phone" class="block text-gray-700 text-sm font-bold mb-2">সরবরাহকারীর ফোন (ঐচ্ছিক)</label>
+                    <input type="text" name="supplier_phone" id="new_supplier_phone" value="{{ old('supplier_phone') }}" class="shadow border rounded w-full py-2 px-3 text-gray-700" placeholder="01XXXXXXXXX">
                 </div>
             </div>
         </form>
@@ -208,6 +220,23 @@
             toggleBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
             toggleBtn.classList.add('bg-green-500', 'hover:bg-green-700');
             showingExisting = true;
+        }
+    });
+
+    // Auto-fill product details when selected
+    const productSelect = document.getElementById('product_id');
+    const products = @json($products);
+    
+    productSelect.addEventListener('change', function() {
+        const selectedId = this.value;
+        const product = products.find(p => p.id == selectedId);
+        
+        if (product) {
+            document.getElementById('purchase_price').value = product.purchase_price || '';
+            document.getElementById('sell_price').value = product.sell_price || '';
+        } else {
+            document.getElementById('purchase_price').value = '';
+            document.getElementById('sell_price').value = '';
         }
     });
 </script>
