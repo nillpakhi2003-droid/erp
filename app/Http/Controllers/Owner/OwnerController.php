@@ -280,7 +280,7 @@ class OwnerController extends Controller
         $totalPaid = (clone $statsQuery)->sum('paid_amount');
         $totalDue = (clone $statsQuery)->sum('due_amount');
         
-        return view('owner.all-sales', compact('sales', 'totalSales', 'totalProfit', 'totalPaid', 'totalDue'));
+        return view('owner.all-sales', compact('groupedSales', 'totalSales', 'totalProfit', 'totalPaid', 'totalDue'));
     }
 
     /**
