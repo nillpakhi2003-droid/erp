@@ -29,22 +29,7 @@ return [
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => env('MYSQL_ATTR_SSL_VERIFY_SERVER_CERT', false),
-                PDO::ATTR_EMULATE_PREPARES => false,
-                PDO::ATTR_STRINGIFY_FETCHES => false,
             ]) : [],
-            'sticky' => true,
-            'read' => [
-                'host' => [
-                    env('DB_READ_HOST_1', env('DB_HOST', '127.0.0.1')),
-                    env('DB_READ_HOST_2', env('DB_HOST', '127.0.0.1')),
-                ],
-            ],
-            'write' => [
-                'host' => [
-                    env('DB_WRITE_HOST', env('DB_HOST', '127.0.0.1')),
-                ],
-            ],
         ],
 
         'pgsql' => [
