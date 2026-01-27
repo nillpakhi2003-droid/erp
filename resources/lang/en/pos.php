@@ -8,6 +8,12 @@ return [
     'billing' => 'Billing',
     'receipt' => 'Receipt',
     'receipts' => 'Receipts',
+    'profile' => 'Profile',
+    'settings' => 'Settings',
+    'logout' => 'Logout',
+    'daily_sales' => 'Daily Sales',
+    'not_configured' => 'Not Configured',
+    'quick_actions' => 'Quick Actions',
 
     // Hardware
     'hardware' => 'Hardware',

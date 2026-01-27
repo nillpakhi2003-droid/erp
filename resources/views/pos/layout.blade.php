@@ -45,8 +45,8 @@
                                 </svg>
                             </button>
                             <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-50">
-                                <a href="#" class="block px-4 py-2 hover:bg-gray-100">{{ __('messages.profile') }}</a>
-                                <a href="#" class="block px-4 py-2 hover:bg-gray-100">{{ __('messages.settings') }}</a>
+                                <a href="#" class="block px-4 py-2 hover:bg-gray-100">{{ __('pos.profile') }}</a>
+                                <a href="#" class="block px-4 py-2 hover:bg-gray-100">{{ __('pos.settings') }}</a>
                                 <a href="{{ route('logout') }}" class="block px-4 py-2 hover:bg-gray-100">{{ __('pos.logout') }}</a>
                             </div>
                         </div>

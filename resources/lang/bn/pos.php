@@ -8,6 +8,12 @@ return [
     'billing' => 'বিলিং',
     'receipt' => 'রসিদ',
     'receipts' => 'রসিদগুলি',
+    'profile' => 'প্রোফাইল',
+    'settings' => 'সেটিংস',
+    'logout' => 'লগআউট',
+    'daily_sales' => 'দৈনিক বিক্রয়',
+    'not_configured' => 'কনফিগার করা হয়নি',
+    'quick_actions' => 'দ্রুত কাজ',
 
     // Hardware
     'hardware' => 'হার্ডওয়্যার',

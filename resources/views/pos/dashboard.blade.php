@@ -12,10 +12,10 @@
                 <div>
                     <p class="text-gray-600 text-sm">{{ __('pos.daily_sales') }}</p>
                     <p class="text-3xl font-bold text-gray-900 mt-2">
-                        ৳ {{ number_format($todaysSalesTotal, 2) }}
+                        ৳ {{ bn_number(number_format($todaysSalesTotal, 2)) }}
                     </p>
                     <p class="text-xs text-gray-500 mt-2">
-                        {{ $todaysSalesCount }} {{ __('pos.transactions') }}
+                        {{ bn_number($todaysSalesCount) }} {{ __('pos.transactions') }}
                     </p>
                 </div>
                 <svg class="w-12 h-12 text-blue-500 opacity-20" fill="currentColor" viewBox="0 0 20 20">
