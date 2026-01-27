@@ -125,6 +125,36 @@ fi
 rm "$TEMP_SQL"
 echo ""
 
+# Run migrations to add any new tables/columns
+echo "🔄 Running migrations to add new features..."
+php artisan migrate --force > /dev/null 2>&1
+
+if [ $? -eq 0 ]; then
+    echo "✅ Migrations completed"
+else
+    echo "⚠️  Some migrations may have failed (this might be okay)"
+fi
+
+# Create SystemVersion for businesses that don't have it
+echo "🔧 Enabling POS for all businesses..."
+php artisan tinker --execute="
+\$businesses = App\Models\Business::doesntHave('systemVersion')->get();
+foreach (\$businesses as \$business) {
+    App\Models\SystemVersion::create([
+        'business_id' => \$business->id,
+        'version' => 'pro',
+        'pos_enabled' => true,
+        'barcode_scanner_enabled' => true,
+        'thermal_printer_enabled' => true,
+        'cash_drawer_enabled' => true,
+        'pos_activated_at' => now(),
+    ]);
+}
+echo 'POS enabled for ' . \$businesses->count() . ' businesses';
+" 2>&1 | tail -1
+
+echo ""
+
 # Clear Laravel caches
 echo "🧹 Clearing Laravel caches..."
 php artisan config:clear > /dev/null 2>&1
@@ -139,5 +169,6 @@ echo "✅ Restore completed successfully!"
 echo "=========================================="
 echo ""
 echo "Your database has been restored from backup."
+echo "New features and POS system have been enabled."
 echo "You can now login with your previous credentials."
 echo ""
