@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,18 +80,18 @@
                             {{ $businessName }}
                         </a>
                     @else
-                        <span class="text-xl font-bold text-gray-800">ইআরপি সিস্টেম</span>
+                        <span class="text-xl font-bold text-gray-800">{{ __('app.system_name') }}</span>
                     @endauth
                     @auth
                         <span class="ml-4 text-sm text-gray-600">
                             @if(auth()->user()->isSuperAdmin())
-                                সুপার অ্যাডমিন
+                                {{ __('app.role_superadmin') }}
                             @elseif(auth()->user()->isOwner())
-                                মালিক
+                                {{ __('app.role_owner') }}
                             @elseif(auth()->user()->isManager())
-                                ম্যানেজার
+                                {{ __('app.role_manager') }}
                             @else
-                                সেলসম্যান
+                                {{ __('app.role_salesman') }}
                             @endif
                         </span>
                     @endauth
@@ -110,7 +110,7 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                লগআউট
+                                {{ __('app.logout') }}
                             </button>
                         </form>
                     @endauth
