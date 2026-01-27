@@ -33,4 +33,6 @@ return [
     'voucher_label' => 'ভাউচার',
     'voucher_image' => 'ভাউচার ছবি',
     'view_image' => 'ছবি দেখুন',
+    'upload' => 'আপলোড',
+    'image_uploaded' => 'ছবি সফলভাবে আপলোড হয়েছে',
 ];

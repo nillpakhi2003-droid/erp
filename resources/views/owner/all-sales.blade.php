@@ -30,6 +30,12 @@
                        placeholder="V-20251122-0001"
                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm sm:text-base p-2">
             </div>
+            <div>
+                <label for="phone_search" class="block text-sm font-medium text-gray-700 mb-2">{{ __('sales.phone') }}</label>
+                <input type="text" name="phone_search" id="phone_search" value="{{ request('phone_search') }}" 
+                       placeholder="017..."
+                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm sm:text-base p-2">
+            </div>
             <div class="flex items-end gap-2">
                 <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 sm:px-6 rounded text-sm sm:text-base">
                     {{ __('sales.search') }}
@@ -91,13 +97,23 @@
                                class="font-mono text-blue-600 hover:text-blue-800 hover:underline font-semibold">
                                 🧾 {{ $group['voucher_number'] ?? 'N/A' }}
                             </a>
-                            @if(!empty($group['voucher_image']))
-                                <div class="mt-1">
-                                    <a href="{{ Storage::url($group['voucher_image']) }}" target="_blank" class="text-xs text-indigo-600 hover:text-indigo-800 hover:underline">
+                            <div class="mt-2 flex flex-col gap-1 items-start">
+                                @if(!empty($group['voucher_image']))
+                                    <a href="{{ Storage::url($group['voucher_image']) }}" target="_blank" class="text-xs text-indigo-600 hover:text-indigo-800 hover:underline flex items-center gap-1">
                                         📷 {{ __('sales.view_image') }}
                                     </a>
-                                </div>
-                            @endif
+                                @endif
+                                
+                                <form action="{{ route('owner.sales.upload-image') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="voucher_number" value="{{ $group['voucher_number'] }}">
+                                    <label class="cursor-pointer inline-flex items-center gap-1 text-xs bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded px-2 py-1 text-gray-700 transition-colors">
+                                        <span>📤</span> 
+                                        <span>{{ __('sales.upload') }}</span>
+                                        <input type="file" name="voucher_image" class="hidden" onchange="this.form.submit()">
+                                    </label>
+                                </form>
+                            </div>
                         </td>
                         <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900">
                             {{ $group['products'] }}

@@ -33,4 +33,6 @@ return [
     'voucher_label' => 'Voucher',
     'voucher_image' => 'Voucher Image',
     'view_image' => 'View Image',
+    'upload' => 'Upload',
+    'image_uploaded' => 'Image uploaded successfully',
 ];

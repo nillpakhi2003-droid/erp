@@ -10,6 +10,7 @@ use App\Models\ProfitRealization;
 use App\Models\Expense;
 use App\Models\Business;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class OwnerController extends Controller
 {
@@ -238,6 +239,11 @@ class OwnerController extends Controller
             $query->whereDate('created_at', '<=', request('end_date'));
         }
         
+        // Search by phone
+        if (request('phone_search')) {
+            $query->where('customer_phone', 'LIKE', '%' . request('phone_search') . '%');
+        }
+        
         // Voucher search
         if (request('voucher_search')) {
             $query->where('voucher_number', 'LIKE', '%' . request('voucher_search') . '%');
@@ -275,6 +281,9 @@ class OwnerController extends Controller
         if (request('voucher_search')) {
             $statsQuery->where('voucher_number', 'LIKE', '%' . request('voucher_search') . '%');
         }
+        if (request('phone_search')) {
+            $statsQuery->where('customer_phone', 'LIKE', '%' . request('phone_search') . '%');
+        }
         
         $totalSales = $statsQuery->sum('total_amount');
         $totalProfit = (clone $statsQuery)->sum('profit');
@@ -306,5 +315,21 @@ class OwnerController extends Controller
         $user->save();
 
         return $business->id;
+    }
+
+    public function uploadVoucherImage(Request $request)
+    {
+        $request->validate([
+            'voucher_number' => 'required|string|exists:sales,voucher_number',
+            'voucher_image' => 'required|image|max:51200', // 50MB max
+        ]);
+
+        $path = $request->file('voucher_image')->store('vouchers', 'public');
+
+        // Update all sales with this voucher number
+        Sale::where('voucher_number', $request->voucher_number)
+            ->update(['voucher_image' => $path]);
+
+        return back()->with('success', __('sales.image_uploaded'));
     }
 }

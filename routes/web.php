@@ -67,6 +67,7 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
     Route::get('/dashboard', [OwnerController::class, 'dashboard'])->name('dashboard');
     Route::get('/due-customers', [OwnerController::class, 'dueCustomers'])->name('due-customers');
     Route::get('/all-sales', [OwnerController::class, 'allSales'])->name('all-sales');
+    Route::post('/sales/upload-image', [OwnerController::class, 'uploadVoucherImage'])->name('sales.upload-image');
     Route::get('/voucher/{sale}/print', [VoucherController::class, 'print'])->name('voucher.print');
     Route::get('/payment/{sale}/record', [OwnerController::class, 'recordPayment'])->name('payment.record');
     Route::post('/payment/{sale}/store', [OwnerController::class, 'storePayment'])->name('payment.store');
