@@ -58,4 +58,9 @@ class Business extends Model
     {
         return $this->hasMany(ReceiptPrint::class);
     }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class, 'business_id');
+    }
 }
