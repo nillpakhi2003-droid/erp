@@ -140,6 +140,73 @@
                     </div>
                 </div>
 
+                <!-- POS Receipt Template Settings -->
+                <div class="mb-8 bg-blue-50 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-blue-200">POS রিসিট টেমপ্লেট সেটিংস</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">রিসিট হেডার টেক্সট</label>
+                            <input type="text" name="receipt_header_text" value="{{ old('receipt_header_text', $template->receipt_header_text ?? '') }}" 
+                                   placeholder="যেমন: ধন্যবাদ! আবার আসবেন" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">রিসিট ফুটার টেক্সট</label>
+                            <input type="text" name="receipt_footer_text" value="{{ old('receipt_footer_text', $template->receipt_footer_text ?? '') }}" 
+                                   placeholder="যেমন: সফটওয়্যার দ্বারা তৈরি" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">কাগজের সাইজ / Paper Size</label>
+                            <select name="receipt_paper_size" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="58mm" {{ ($template->receipt_paper_size ?? '80mm') == '58mm' ? 'selected' : '' }}>58mm (Small)</option>
+                                <option value="80mm" {{ ($template->receipt_paper_size ?? '80mm') == '80mm' ? 'selected' : '' }}>80mm (Standard)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">রিসিট ফন্ট সাইজ</label>
+                            <select name="receipt_font_size" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="10px" {{ ($template->receipt_font_size ?? '12px') == '10px' ? 'selected' : '' }}>10px - ছোট</option>
+                                <option value="12px" {{ ($template->receipt_font_size ?? '12px') == '12px' ? 'selected' : '' }}>12px - মাঝারি (ডিফল্ট)</option>
+                                <option value="14px" {{ ($template->receipt_font_size ?? '12px') == '14px' ? 'selected' : '' }}>14px - বড়</option>
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-2 space-y-3 border-t border-blue-200 pt-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="receipt_show_logo" id="receipt_show_logo" value="1" 
+                                       {{ old('receipt_show_logo', $template->receipt_show_logo ?? true) ? 'checked' : '' }}
+                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="receipt_show_logo" class="ml-2 block text-sm font-medium text-gray-700">
+                                    রিসিটে লোগো দেখান
+                                </label>
+                            </div>
+
+                            <div class="flex items-center">
+                                <input type="checkbox" name="receipt_show_customer" id="receipt_show_customer" value="1" 
+                                       {{ old('receipt_show_customer', $template->receipt_show_customer ?? true) ? 'checked' : '' }}
+                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="receipt_show_customer" class="ml-2 block text-sm font-medium text-gray-700">
+                                    কাস্টমার তথ্য দেখান
+                                </label>
+                            </div>
+
+                            <div class="flex items-center">
+                                <input type="checkbox" name="receipt_show_payment_method" id="receipt_show_payment_method" value="1" 
+                                       {{ old('receipt_show_payment_method', $template->receipt_show_payment_method ?? true) ? 'checked' : '' }}
+                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="receipt_show_payment_method" class="ml-2 block text-sm font-medium text-gray-700">
+                                    পেমেন্ট পদ্ধতি দেখান
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Action Buttons -->
                 <div class="flex items-center justify-between pt-6 border-t">
                     <a href="{{ route('superadmin.businesses.index') }}" 

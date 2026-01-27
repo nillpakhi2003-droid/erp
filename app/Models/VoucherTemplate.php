@@ -23,6 +23,14 @@ class VoucherTemplate extends Model
         'logo_url',
         'show_watermark',
         'watermark_text',
+        // Receipt Template Fields
+        'receipt_header_text',
+        'receipt_footer_text',
+        'receipt_paper_size',
+        'receipt_show_logo',
+        'receipt_show_customer',
+        'receipt_show_payment_method',
+        'receipt_font_size',
     ];
 
     public function business()

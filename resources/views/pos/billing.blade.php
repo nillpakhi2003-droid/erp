@@ -352,6 +352,10 @@
     
     // Print receipt and reset
     function printReceiptAndReset(transactionId) {
+        // Open receipt in new window for printing
+        const receiptUrl = '{{ route("pos.receipt.view", "") }}/' + transactionId;
+        window.open(receiptUrl, '_blank', 'width=400,height=600');
+        
         // Print receipt if printer enabled
         @if($canPrintReceipt)
             fetch(`{{ route('pos.receipt.print', '') }}/${transactionId}`, {

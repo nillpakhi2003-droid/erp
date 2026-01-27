@@ -230,6 +230,15 @@ class POSDashboardController extends Controller
         }
 
         try {
+            // Get template and business info
+            $business = $transaction->business;
+            $template = $business->voucherTemplate;
+            
+            // Get customer info from first sale record
+            $firstSale = \App\Models\Sale::where('voucher_number', $transaction->transaction_number)->first();
+            $customerName = $firstSale->customer_name ?? 'POS Customer';
+            $customerPhone = $firstSale->customer_phone ?? null;
+            
             // Create receipt print record
             $receipt = $transaction->receiptPrints()->create([
                 'business_id' => $transaction->business_id,
@@ -237,17 +246,15 @@ class POSDashboardController extends Controller
                 'status' => 'pending',
             ]);
 
-            // In production, this would send to actual printer
-            // For now, mark as completed
+            // Mark as printed
             $receipt->markAsPrinted();
-
-            // Update transaction
             $transaction->update(['receipt_printed' => true]);
 
             return response()->json([
                 'success' => true,
                 'message' => __('pos.print_successful'),
                 'receipt' => $receipt,
+                'receipt_url' => route('pos.receipt.view', $transaction->id),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -256,6 +263,22 @@ class POSDashboardController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+    
+    /**
+     * View/print receipt.
+     */
+    public function viewReceipt(POSTransaction $transaction)
+    {
+        $business = $transaction->business;
+        $template = $business->voucherTemplate;
+        
+        // Get customer info
+        $firstSale = \App\Models\Sale::where('voucher_number', $transaction->transaction_number)->first();
+        $customerName = $firstSale->customer_name ?? 'POS Customer';
+        $customerPhone = $firstSale->customer_phone ?? null;
+        
+        return view('pos.receipt', compact('transaction', 'business', 'template', 'customerName', 'customerPhone'));
     }
 
     /**

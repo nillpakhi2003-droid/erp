@@ -155,6 +155,7 @@ Route::middleware(['auth', 'role:owner|manager|salesman|cashier'])->prefix('pos'
     Route::get('/billing', [\App\Http\Controllers\POS\POSDashboardController::class, 'billing'])->name('billing');
     Route::post('/transaction', [\App\Http\Controllers\POS\POSDashboardController::class, 'createTransaction'])->name('transaction.store');
     Route::post('/print-receipt/{transaction}', [\App\Http\Controllers\POS\POSDashboardController::class, 'printReceipt'])->name('receipt.print');
+    Route::get('/receipt/{transaction}', [\App\Http\Controllers\POS\POSDashboardController::class, 'viewReceipt'])->name('receipt.view');
     Route::post('/open-drawer', [\App\Http\Controllers\POS\POSDashboardController::class, 'openDrawer'])->name('drawer.open');
     Route::get('/search-product', [\App\Http\Controllers\POS\POSDashboardController::class, 'searchProduct'])->name('product.search');
     Route::get('/summary', [\App\Http\Controllers\POS\POSDashboardController::class, 'getSummary'])->name('summary');

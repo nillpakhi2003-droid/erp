@@ -128,6 +128,14 @@ class BusinessController extends Controller
             'logo_url' => 'nullable|url|max:500',
             'show_watermark' => 'boolean',
             'watermark_text' => 'nullable|string|max:50',
+            // Receipt Template
+            'receipt_header_text' => 'nullable|string|max:500',
+            'receipt_footer_text' => 'nullable|string|max:500',
+            'receipt_paper_size' => 'nullable|in:58mm,80mm',
+            'receipt_show_logo' => 'boolean',
+            'receipt_show_customer' => 'boolean',
+            'receipt_show_payment_method' => 'boolean',
+            'receipt_font_size' => 'nullable|string|max:10',
         ]);
 
         // Ensure watermark_text has a default value if not provided
