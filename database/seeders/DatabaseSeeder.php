@@ -9,6 +9,7 @@ use App\Models\StockEntry;
 use App\Models\VoucherTemplate;
 use App\Models\ProfitRealization;
 use App\Models\Business;
+use App\Models\SystemVersion;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -36,6 +37,17 @@ class DatabaseSeeder extends Seeder
             'phone' => '01711111111',
             'address' => 'মতিঝিল, ঢাকা-১০০০',
             'is_active' => true,
+        ]);
+
+        // Auto-enable POS system for the business
+        SystemVersion::create([
+            'business_id' => $business->id,
+            'version' => 'pro',
+            'pos_enabled' => true,
+            'barcode_scanner_enabled' => true,
+            'thermal_printer_enabled' => true,
+            'cash_drawer_enabled' => true,
+            'pos_activated_at' => now(),
         ]);
 
         // Create Owner 1 for the business
