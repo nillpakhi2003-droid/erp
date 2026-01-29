@@ -178,6 +178,14 @@ Route::middleware(['auth', 'role:owner|manager|salesman|cashier'])->prefix('pos'
     Route::get('/cash-drawer/{id}', [\App\Http\Controllers\POS\CashDrawerController::class, 'show'])->name('cash-drawer.show');
     Route::get('/cash-drawer/{id}/close', [\App\Http\Controllers\POS\CashDrawerController::class, 'close'])->name('cash-drawer.close');
     Route::put('/cash-drawer/{id}', [\App\Http\Controllers\POS\CashDrawerController::class, 'update'])->name('cash-drawer.update');
+    
+    // Hardware Configuration
+    Route::get('/hardware', [\App\Http\Controllers\POS\HardwareController::class, 'index'])->name('hardware.index');
+    Route::get('/hardware/create', [\App\Http\Controllers\POS\HardwareController::class, 'create'])->name('hardware.create');
+    Route::post('/hardware', [\App\Http\Controllers\POS\HardwareController::class, 'store'])->name('hardware.store');
+    Route::post('/hardware/{device}/test', [\App\Http\Controllers\POS\HardwareController::class, 'test'])->name('hardware.test');
+    Route::get('/hardware/{device}/toggle', [\App\Http\Controllers\POS\HardwareController::class, 'toggle'])->name('hardware.toggle');
+    Route::delete('/hardware/{device}', [\App\Http\Controllers\POS\HardwareController::class, 'destroy'])->name('hardware.destroy');
 });
 
 // Super Admin Hardware Management Routes
