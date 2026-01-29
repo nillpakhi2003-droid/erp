@@ -367,18 +367,9 @@
     
     // Print receipt and reset
     function printReceiptAndReset(transactionId) {
-        // Open receipt in popup window
+        // Open receipt in popup window with specific features
         const receiptUrl = '{{ route("pos.receipt.view", "") }}/' + transactionId;
-        const popup = window.open(receiptUrl, 'receipt', 'width=400,height=600,scrollbars=yes');
-        
-        // Auto-print when loaded
-        if (popup) {
-            popup.onload = function() {
-                setTimeout(function() {
-                    popup.print();
-                }, 500);
-            };
-        }
+        window.open(receiptUrl, 'POSReceipt', 'width=400,height=700,scrollbars=yes,location=no,menubar=no,toolbar=no');
         
         // Print receipt if printer enabled
         @if($canPrintReceipt)
@@ -398,6 +389,7 @@
         document.getElementById('paymentMethod').value = 'cash';
         document.getElementById('customerName').value = '';
         document.getElementById('customerPhone').value = '';
+        document.getElementById('discountInput').value = '0';
         updateCart();
         
         // Fetch and update summary
