@@ -66,7 +66,7 @@ class POSTransaction extends Model
      */
     public function receiptPrints(): HasMany
     {
-        return $this->hasMany(ReceiptPrint::class);
+        return $this->hasMany(ReceiptPrint::class, 'pos_transaction_id');
     }
 
     /**
