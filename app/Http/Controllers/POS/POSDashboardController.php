@@ -8,6 +8,7 @@ use App\Models\HardwareDevice;
 use App\Models\POSTransaction;
 use App\Models\Product;
 use App\Models\ReceiptPrint;
+use App\Models\Sale;
 use App\Models\SystemVersion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

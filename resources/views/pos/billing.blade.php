@@ -85,12 +85,22 @@
                 <span>{{ __('pos.subtotal') }}:</span>
                 <span class="font-semibold">৳ <span id="subtotal">0.00</span></span>
             </div>
-            <div class="flex justify-between">
+            <div class="flex justify-between items-center">
                 <span>{{ __('pos.discount') }}:</span>
-                <span class="font-semibold">৳ <span id="discountAmount">0.00</span></span>
+                <div class="flex items-center gap-2">
+                    <input type="number" 
+                           id="discountInput" 
+                           value="0" 
+                           min="0" 
+                           step="0.01" 
+                           onchange="updateTotals()" 
+                           oninput="updateTotals()"
+                           class="w-20 px-2 py-1 border border-gray-300 rounded text-xs text-right">
+                    <span class="font-semibold text-xs">৳ <span id="discountAmount">0.00</span></span>
+                </div>
             </div>
-            <div class="flex justify-between">
-                <span>{{ __('pos.tax') }}:</span>
+            <div class="flex justify-between text-gray-400">
+                <span>{{ __('pos.tax') }} ({{ __('messages.disabled') ?? 'Disabled' }}):</span>
                 <span class="font-semibold">৳ <span id="taxAmount">0.00</span></span>
             </div>
             <div class="flex justify-between text-lg font-bold border-t pt-2 text-blue-600">
@@ -266,8 +276,9 @@
     // Update totals
     function updateTotals() {
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const discount = 0; // Can be added via form
-        const tax = subtotal * 0.10; // 10% tax
+        const discountInput = document.getElementById('discountInput');
+        const discount = discountInput ? parseFloat(discountInput.value) || 0 : 0;
+        const tax = 0; // VAT/Tax disabled
         const total = subtotal - discount + tax;
         
         document.getElementById('subtotal').textContent = subtotal.toFixed(2);
