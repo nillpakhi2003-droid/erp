@@ -149,12 +149,12 @@
         .label-20x10 {
             width: 20mm;
             height: 10mm;
-            padding: 0.5mm;
+            padding: 0;
         }
         .label-20x10 .product-name {
             font-size: 5pt;
             font-weight: bold;
-            margin-bottom: 0;
+            margin: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -165,24 +165,24 @@
         }
         .label-20x10 .barcode-text {
             font-size: 4pt;
-            margin-top: 0;
+            margin: 0;
         }
         .label-20x10 .price {
             font-size: 5pt;
             font-weight: bold;
-            margin-top: 0;
+            margin: 0;
         }
         
         /* 30x20mm - Small */
         .label-30x20 {
             width: 30mm;
             height: 20mm;
-            padding: 0.5mm;
+            padding: 0;
         }
         .label-30x20 .product-name {
             font-size: 6pt;
             font-weight: bold;
-            margin-bottom: 0;
+            margin: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -193,24 +193,24 @@
         }
         .label-30x20 .barcode-text {
             font-size: 5pt;
-            margin-top: 0;
+            margin: 0;
         }
         .label-30x20 .price {
             font-size: 6pt;
             font-weight: bold;
-            margin-top: 0;
+            margin: 0;
         }
         
         /* 40x30mm - Medium */
         .label-40x30 {
             width: 40mm;
             height: 30mm;
-            padding: 1mm;
+            padding: 0;
         }
         .label-40x30 .product-name {
             font-size: 7pt;
             font-weight: bold;
-            margin-bottom: 0;
+            margin: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -221,24 +221,24 @@
         }
         .label-40x30 .barcode-text {
             font-size: 6pt;
-            margin-top: 0;
+            margin: 0;
         }
         .label-40x30 .price {
             font-size: 7pt;
             font-weight: bold;
-            margin-top: 0;
+            margin: 0;
         }
         
         /* 45x35mm - Your Custom Size */
         .label-45x35 {
             width: 45mm;
             height: 35mm;
-            padding: 1mm;
+            padding: 0;
         }
         .label-45x35 .product-name {
             font-size: 8pt;
             font-weight: bold;
-            margin-bottom: 0.5mm;
+            margin: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -249,24 +249,24 @@
         }
         .label-45x35 .barcode-text {
             font-size: 7pt;
-            margin-top: 0;
+            margin: 0;
         }
         .label-45x35 .price {
             font-size: 8pt;
             font-weight: bold;
-            margin-top: 0.5mm;
+            margin: 0;
         }
         
         /* 50x30mm - Standard */
         .label-50x30 {
             width: 50mm;
             height: 30mm;
-            padding: 1mm;
+            padding: 0;
         }
         .label-50x30 .product-name {
             font-size: 8pt;
             font-weight: bold;
-            margin-bottom: 0;
+            margin: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -277,24 +277,24 @@
         }
         .label-50x30 .barcode-text {
             font-size: 7pt;
-            margin-top: 0;
+            margin: 0;
         }
         .label-50x30 .price {
             font-size: 9pt;
             font-weight: bold;
-            margin-top: 0;
+            margin: 0;
         }
         
         /* 60x40mm - Large */
         .label-60x40 {
             width: 60mm;
             height: 40mm;
-            padding: 1mm;
+            padding: 0;
         }
         .label-60x40 .product-name {
             font-size: 10pt;
             font-weight: bold;
-            margin-bottom: 0;
+            margin: 0;
         }
         .label-60x40 .barcode-svg {
             height: 20mm;
@@ -302,24 +302,24 @@
         }
         .label-60x40 .barcode-text {
             font-size: 8pt;
-            margin-top: 0;
+            margin: 0;
         }
         .label-60x40 .price {
             font-size: 11pt;
             font-weight: bold;
-            margin-top: 0;
+            margin: 0;
         }
         
         /* 70x50mm - Extra Large */
         .label-70x50 {
             width: 70mm;
             height: 50mm;
-            padding: 1mm;
+            padding: 0;
         }
         .label-70x50 .product-name {
             font-size: 12pt;
             font-weight: bold;
-            margin-bottom: 0;
+            margin: 0;
         }
         .label-70x50 .barcode-svg {
             height: 25mm;
@@ -327,24 +327,24 @@
         }
         .label-70x50 .barcode-text {
             font-size: 10pt;
-            margin-top: 0;
+            margin: 0;
         }
         .label-70x50 .price {
             font-size: 13pt;
             font-weight: bold;
-            margin-top: 0;
+            margin: 0;
         }
         
         /* 100x50mm - Wide */
         .label-100x50 {
             width: 100mm;
             height: 50mm;
-            padding: 1mm;
+            padding: 0;
         }
         .label-100x50 .product-name {
             font-size: 14pt;
             font-weight: bold;
-            margin-bottom: 0;
+            margin: 0;
         }
         .label-100x50 .barcode-svg {
             height: 28mm;
@@ -352,12 +352,12 @@
         }
         .label-100x50 .barcode-text {
             font-size: 12pt;
-            margin-top: 0;
+            margin: 0;
         }
         .label-100x50 .price {
             font-size: 15pt;
             font-weight: bold;
-            margin-top: 0;
+            margin: 0;
         }
         
         .barcode-svg svg {
@@ -480,16 +480,16 @@
             const labelSize = '{{ $labelSize }}';
             
             // Configure barcode settings based on label size
-            // Increased width for better Netum scanner detection
+            // Reduced margins for compact printing, but still scannable
             const barcodeSettings = {
-                '20x10': { width: 2, height: 20, fontSize: 8, margin: 1 },
-                '30x20': { width: 2.5, height: 30, fontSize: 10, margin: 2 },
-                '40x30': { width: 3, height: 40, fontSize: 12, margin: 2 },
-                '45x35': { width: 3, height: 48, fontSize: 13, margin: 2 },
-                '50x30': { width: 3, height: 45, fontSize: 12, margin: 2 },
-                '60x40': { width: 3.5, height: 55, fontSize: 14, margin: 3 },
-                '70x50': { width: 4, height: 65, fontSize: 16, margin: 3 },
-                '100x50': { width: 4.5, height: 75, fontSize: 18, margin: 4 }
+                '20x10': { width: 2, height: 20, fontSize: 8, margin: 0.5 },
+                '30x20': { width: 2.5, height: 30, fontSize: 10, margin: 1 },
+                '40x30': { width: 3, height: 40, fontSize: 12, margin: 1 },
+                '45x35': { width: 3, height: 48, fontSize: 13, margin: 1 },
+                '50x30': { width: 3, height: 45, fontSize: 12, margin: 1 },
+                '60x40': { width: 3.5, height: 55, fontSize: 14, margin: 1.5 },
+                '70x50': { width: 4, height: 65, fontSize: 16, margin: 1.5 },
+                '100x50': { width: 4.5, height: 75, fontSize: 18, margin: 2 }
             };
             
             const settings = barcodeSettings[labelSize] || barcodeSettings['45x35'];
