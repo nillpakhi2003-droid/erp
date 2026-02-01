@@ -14,46 +14,46 @@
         body {
             font-family: 'Arial', 'Helvetica', sans-serif;
             font-size: {{ $template->receipt_font_size ?? '12px' }};
-            line-height: 1.2;
+            line-height: 1.1;
             color: #000;
             background: #fff;
             width: {{ $template->receipt_paper_size ?? '80mm' }};
-            margin: 0 auto;
-            padding: 3mm;
+            margin: 0;
+            padding: 2mm;
         }
         
         .receipt-header {
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             border-bottom: 2px dashed #000;
-            padding-bottom: 5px;
+            padding-bottom: 3px;
         }
         
         .logo {
-            max-width: 60px;
-            margin: 0 auto 3px;
+            max-width: 80px;
+            margin: 0 auto 2px;
         }
         
         .company-name {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
         
         .company-info {
-            font-size: 10px;
-            line-height: 1.2;
+            font-size: 11px;
+            line-height: 1.1;
         }
         
         .header-text {
-            margin-top: 3px;
-            font-size: 10px;
+            margin-top: 2px;
+            font-size: 11px;
             font-style: italic;
         }
         
         .receipt-meta {
-            margin: 5px 0;
-            font-size: 10px;
+            margin: 3px 0;
+            font-size: 11px;
         }
         
         .receipt-meta table {
@@ -61,11 +61,12 @@
         }
         
         .receipt-meta td {
-            padding: 1px 0;
+            padding: 0;
+            line-height: 1.1;
         }
         
         .receipt-items {
-            margin: 5px 0;
+            margin: 3px 0;
             border-top: 1px dashed #000;
             border-bottom: 2px solid #000;
         }
@@ -77,13 +78,14 @@
         
         .receipt-items th {
             text-align: left;
-            padding: 3px 0;
+            padding: 2px 0;
             border-bottom: 1px solid #000;
             font-weight: bold;
         }
         
         .receipt-items td {
-            padding: 2px 0;
+            padding: 1px 0;
+            line-height: 1.1;
         }
         
         .text-right {
@@ -91,7 +93,7 @@
         }
         
         .totals {
-            margin: 5px 0;
+            margin: 3px 0;
         }
         
         .totals table {
@@ -99,38 +101,50 @@
         }
         
         .totals td {
-            padding: 2px 0;
+            padding: 1px 0;
+            line-height: 1.1;
         }
         
         .grand-total {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
             border-top: 2px solid #000;
-            padding-top: 3px !important;
+            padding-top: 2px !important;
         }
         
         .payment-info {
-            margin: 5px 0;
+            margin: 3px 0;
             border-top: 1px dashed #000;
-            padding-top: 5px;
+            padding-top: 3px;
+        }
+        
+        .payment-info td {
+            padding: 0;
+            line-height: 1.1;
         }
         
         .footer {
             text-align: center;
-            margin-top: 8px;
-            font-size: 9px;
+            margin-top: 5px;
+            font-size: 10px;
             border-top: 2px dashed #000;
-            padding-top: 5px;
+            padding-top: 3px;
+            margin-bottom: 0;
         }
         
         @media print {
+            html, body {
+                height: auto;
+                margin: 0;
+                padding: 0;
+            }
             body {
                 width: {{ $template->receipt_paper_size ?? '80mm' }};
-                margin: 0;
-                padding: 3mm;
+                padding: 2mm;
             }
             @page {
                 margin: 0;
+                padding: 0;
                 size: {{ $template->receipt_paper_size ?? '80mm' }} auto;
             }
         }
