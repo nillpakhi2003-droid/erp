@@ -79,6 +79,7 @@
             box-sizing: border-box;
             overflow: visible;
             position: relative;
+            margin-bottom: {{ $stickerGap ?? 0 }}mm;
             @if($labelSize == '20x10')
                 width: 20mm;
                 height: 10mm;
@@ -387,6 +388,7 @@
                 page-break-inside: avoid;
                 break-inside: avoid;
                 margin: 0mm !important;
+                margin-bottom: {{ $stickerGap ?? 0 }}mm !important;
                 padding: 0mm !important;
                 display: flex !important;
                 flex-direction: column !important;

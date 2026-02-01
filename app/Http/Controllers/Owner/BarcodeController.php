@@ -51,6 +51,7 @@ class BarcodeController extends Controller
             'include_name' => 'boolean',
             'offset_x' => 'nullable|integer',
             'offset_y' => 'nullable|integer',
+            'sticker_gap' => 'nullable|integer',
         ]);
 
         $business = Auth::user()->business;
@@ -81,6 +82,7 @@ class BarcodeController extends Controller
             'includeName' => $request->boolean('include_name', true),
             'offsetX' => $request->input('offset_x', 0),
             'offsetY' => $request->input('offset_y', 0),
+            'stickerGap' => $request->input('sticker_gap', 0),
         ]);
     }
 

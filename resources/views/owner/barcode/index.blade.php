@@ -205,6 +205,32 @@
                                 Reset to Center
                             </button>
                         </div>
+
+                        <!-- Gap Between Stickers -->
+                        <div class="mb-4 border border-blue-300 rounded-lg p-4 bg-blue-50">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">
+                                📏 Gap Between Stickers
+                            </label>
+                            
+                            <div class="flex gap-2 mb-2">
+                                <button type="button" onclick="adjustGap(-1)" class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 text-sm">
+                                    ➖ Less Gap
+                                </button>
+                                <button type="button" onclick="adjustGap(0)" class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 text-sm">
+                                    ⊙ No Gap
+                                </button>
+                                <button type="button" onclick="adjustGap(1)" class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 text-sm">
+                                    ➕ More Gap
+                                </button>
+                            </div>
+                            
+                            <input type="hidden" name="sticker_gap" id="stickerGap" value="0">
+                            <div class="text-xs text-center text-gray-600">
+                                Current Gap: <span id="gapDisplay" class="font-semibold">0mm</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Adjust if printer adds extra space between stickers</p>
+                        </div>
+                        
                         <!-- Include Options -->
                         <div class="mb-4 space-y-2">
                             <label class="flex items-center">
@@ -386,6 +412,25 @@
         localStorage.removeItem('barcode_offset_y');
     }
 
+    // Gap adjustment
+    function adjustGap(amount) {
+        const stepSize = 1; // 1mm steps for gap
+        const currentGap = parseInt(document.getElementById('stickerGap').value) || 0;
+        let newGap;
+        
+        if (amount === 0) {
+            newGap = 0; // No gap
+        } else {
+            newGap = currentGap + (amount * stepSize);
+            // Limit gap between -10mm and +10mm
+            newGap = Math.max(-10, Math.min(10, newGap));
+        }
+        
+        document.getElementById('stickerGap').value = newGap;
+        document.getElementById('gapDisplay').textContent = newGap + 'mm';
+        localStorage.setItem('barcode_sticker_gap', newGap);
+    }
+
     // Initialize size preview on page load
     document.addEventListener('DOMContentLoaded', function() {
         updateSizePreview();
@@ -394,6 +439,8 @@
         // Load saved offsets
         const savedOffsetX = localStorage.getItem('barcode_offset_x');
         const savedOffsetY = localStorage.getItem('barcode_offset_y');
+        const savedGap = localStorage.getItem('barcode_sticker_gap');
+        
         if (savedOffsetX) {
             document.getElementById('offsetX').value = savedOffsetX;
             document.getElementById('offsetXDisplay').textContent = savedOffsetX + 'mm';
@@ -401,6 +448,10 @@
         if (savedOffsetY) {
             document.getElementById('offsetY').value = savedOffsetY;
             document.getElementById('offsetYDisplay').textContent = savedOffsetY + 'mm';
+        }
+        if (savedGap) {
+            document.getElementById('stickerGap').value = savedGap;
+            document.getElementById('gapDisplay').textContent = savedGap + 'mm';
         }
     });
 </script>
