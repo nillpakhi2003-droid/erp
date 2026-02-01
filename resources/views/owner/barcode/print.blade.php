@@ -34,10 +34,11 @@
             box-sizing: border-box;
         }
         
-        html, body {
+        html {
             margin: 0;
             padding: 0;
-            background: white;
+            width: 100%;
+            height: 100%;
         }
         
         body {
@@ -45,12 +46,17 @@
             background: white;
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         
         .barcode-container {
             display: block;
             margin: 0;
             padding: 0;
+            width: 100%;
         }
         
         .barcode-label {
@@ -67,6 +73,32 @@
             align-items: center;
             box-sizing: border-box;
             overflow: hidden;
+            position: relative;
+            @if($labelSize == '20x10')
+                width: 20mm;
+                height: 10mm;
+            @elseif($labelSize == '30x20')
+                width: 30mm;
+                height: 20mm;
+            @elseif($labelSize == '40x30')
+                width: 40mm;
+                height: 30mm;
+            @elseif($labelSize == '50x30')
+                width: 50mm;
+                height: 30mm;
+            @elseif($labelSize == '60x40')
+                width: 60mm;
+                height: 40mm;
+            @elseif($labelSize == '70x50')
+                width: 70mm;
+                height: 50mm;
+            @elseif($labelSize == '100x50')
+                width: 100mm;
+                height: 50mm;
+            @else
+                width: 50mm;
+                height: 30mm;
+            @endif
         }
         
         .product-name {
@@ -289,8 +321,8 @@
         @media print {
             html, body {
                 background: white;
-                margin: 0;
-                padding: 0;
+                margin: 0 !important;
+                padding: 0 !important;
                 width: 100%;
                 height: 100%;
             }
@@ -300,35 +332,19 @@
             .barcode-container {
                 margin: 0;
                 padding: 0;
+                width: 100%;
             }
             .barcode-label {
                 page-break-after: always;
                 break-after: page;
                 page-break-inside: avoid;
                 break-inside: avoid;
+                margin: 0 !important;
+                padding: 0 !important;
             }
             .barcode-label:last-child {
                 page-break-after: auto;
                 break-after: auto;
-            }
-            
-            /* Ensure proper orientation for thermal printers */
-            @page {
-                @if($labelSize == '20x10')
-                    size: 20mm 10mm portrait;
-                @elseif($labelSize == '30x20')
-                    size: 30mm 20mm portrait;
-                @elseif($labelSize == '40x30')
-                    size: 40mm 30mm portrait;
-                @elseif($labelSize == '50x30')
-                    size: 50mm 30mm portrait;
-                @elseif($labelSize == '60x40')
-                    size: 60mm 40mm portrait;
-                @elseif($labelSize == '70x50')
-                    size: 70mm 50mm portrait;
-                @elseif($labelSize == '100x50')
-                    size: 100mm 50mm portrait;
-                @endif
             }
         }
         
