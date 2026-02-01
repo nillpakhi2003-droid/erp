@@ -316,31 +316,84 @@ function testDevice(deviceId) {
     });
 }
 
+// Vendor ID to brand name mapping
+const VENDOR_IDS = {
+    '0x0dd4': 'Zebra',
+    '0x0c2e': 'Honeywell',
+    '0x04b8': 'Epson',
+    '0x0519': 'Star Micronics',
+    '0x0483': 'Citizen',
+    '0x154f': 'Bixolon',
+    '0x05e0': 'Symbol',
+    '0x0536': 'Datalogic',
+    '0x067e': 'Intermec',
+    '0x0fe6': 'ICS',
+    '0x1504': 'Code',
+    '0x0525': 'Rongta'
+};
+
 // Auto-detect USB/Serial devices
 async function scanForDevices(e) {
     const button = e.currentTarget;
     const originalText = button.innerHTML;
-    button.innerHTML = '<span class="animate-spin">⌛</span> খুঁজছি...';
+    button.innerHTML = '<span class="animate-spin">⌛</span> ডিভাইস খুঁজছি...';
     button.disabled = true;
     
+    // Clear previous detections
+    const list = document.getElementById('detectedDevicesList');
+    list.innerHTML = '';
+    
+    let deviceCount = 0;
+    
     try {
-        // Check for Web Serial API support (Chrome/Edge)
-        if ('serial' in navigator) {
-            await detectSerialDevices();
+        // Check browser compatibility
+        const hasSerial = 'serial' in navigator;
+        const hasUSB = 'usb' in navigator;
+        
+        if (!hasSerial && !hasUSB) {
+            alert('⚠️ ব্রাউজার সাপোর্ট করে না\n\n' +
+                  'আপনার ব্রাউজার USB/Serial ডিভাইস সনাক্ত করতে পারে না।\n\n' +
+                  '✅ Chrome/Edge/Opera ব্যবহার করুন\n' +
+                  '❌ Firefox/Safari সমর্থিত নয়\n\n' +
+                  'অথবা ম্যানুয়ালি ডিভাইস যোগ করুন।');
+            return;
         }
         
-        // Check for Web USB API support
-        if ('usb' in navigator) {
-            await detectUSBDevices();
+        // Detect Serial devices first
+        if (hasSerial) {
+            try {
+                const serialCount = await detectSerialDevices();
+                deviceCount += serialCount;
+            } catch (error) {
+                console.log('Serial detection error:', error);
+            }
         }
         
-        // Fallback: Show manual detection info
-        if (!('serial' in navigator) && !('usb' in navigator)) {
-            alert('⚠️ আপনার ব্রাউজার স্বয়ংক্রিয় ডিভাইস সনাক্তকরণ সমর্থন করে না।\n\nChrome/Edge ব্যবহার করুন অথবা ম্যানুয়ালি ডিভাইস যোগ করুন। Firefox বর্তমানে USB/Serial সনাক্ত করতে দেয় না।');
+        // Then detect USB devices
+        if (hasUSB) {
+            try {
+                const usbCount = await detectUSBDevices();
+                deviceCount += usbCount;
+            } catch (error) {
+                console.log('USB detection error:', error);
+            }
+        }
+        
+        // Show result message
+        if (deviceCount === 0) {
+            alert('ℹ️ কোনো ডিভাইস পাওয়া যায়নি\n\n' +
+                  'নিশ্চিত করুন:\n' +
+                  '• ডিভাইস USB পোর্টে সংযুক্ত আছে\n' +
+                  '• ডিভাইস চালু আছে\n' +
+                  '• ড্রাইভার ইনস্টল করা আছে\n\n' +
+                  'তারপর আবার চেষ্টা করুন অথবা ম্যানুয়ালি যোগ করুন।');
+        } else {
+            // Scroll to detected devices
+            document.getElementById('detectedDevicesSection').scrollIntoView({ behavior: 'smooth' });
         }
     } catch (error) {
         console.error('Device scan error:', error);
-        alert('❌ ডিভাইস খুঁজতে সমস্যা হয়েছে।\n\n' + error.message);
+        alert('❌ ডিভাইস স্ক্যান ব্যর্থ\n\n' + error.message);
     } finally {
         button.innerHTML = originalText;
         button.disabled = false;
@@ -348,78 +401,163 @@ async function scanForDevices(e) {
 }
 
 async function detectSerialDevices() {
+    let count = 0;
     try {
+        // Get already authorized ports
         const ports = await navigator.serial.getPorts();
         
-        if (ports.length === 0) {
-            // Request port selection
+        if (ports.length > 0) {
+            // Process already authorized ports
+            for (let i = 0; i < ports.length; i++) {
+                const port = ports[i];
+                const info = port.getInfo();
+                const vendorId = info.usbVendorId ? `0x${info.usbVendorId.toString(16).padStart(4, '0')}` : null;
+                const productId = info.usbProductId ? `0x${info.usbProductId.toString(16).padStart(4, '0')}` : null;
+                
+                // Get brand from vendor ID
+                const brand = vendorId && VENDOR_IDS[vendorId] ? VENDOR_IDS[vendorId] : null;
+                
+                addDetectedDevice({
+                    name: brand ? `${brand} Device` : `Serial Device ${i + 1}`,
+                    port: `COM${i + 1}`,
+                    vendor: brand || vendorId,
+                    product: productId,
+                    vendorId: vendorId,
+                    productId: productId
+                });
+                count++;
+            }
+        }
+        
+        // Request user to select a port
+        try {
             const port = await navigator.serial.requestPort();
             if (port) {
                 const info = port.getInfo();
+                const vendorId = info.usbVendorId ? `0x${info.usbVendorId.toString(16).padStart(4, '0')}` : null;
+                const productId = info.usbProductId ? `0x${info.usbProductId.toString(16).padStart(4, '0')}` : null;
+                const brand = vendorId && VENDOR_IDS[vendorId] ? VENDOR_IDS[vendorId] : null;
+                
                 addDetectedDevice({
-                    name: 'Serial Device',
+                    name: brand ? `${brand} Device` : 'Serial Device',
                     port: 'Serial Port',
-                    vendor: info.usbVendorId ? `0x${info.usbVendorId.toString(16)}` : null,
-                    product: info.usbProductId ? `0x${info.usbProductId.toString(16)}` : null
+                    vendor: brand || vendorId,
+                    product: productId,
+                    vendorId: vendorId,
+                    productId: productId
                 });
+                count++;
             }
-        } else {
-            ports.forEach((port, index) => {
-                const info = port.getInfo();
-                addDetectedDevice({
-                    name: `Serial Device ${index + 1}`,
-                    port: `Serial Port ${index + 1}`,
-                    vendor: info.usbVendorId ? `0x${info.usbVendorId.toString(16)}` : null,
-                    product: info.usbProductId ? `0x${info.usbProductId.toString(16)}` : null
-                });
-            });
+        } catch (err) {
+            if (err.name !== 'NotFoundError') {
+                console.log('User cancelled serial port selection');
+            }
         }
     } catch (error) {
-        console.log('Serial detection cancelled or failed:', error);
+        console.error('Serial detection error:', error);
+        throw error;
     }
+    return count;
 }
 
 async function detectUSBDevices() {
+    let count = 0;
     try {
+        // Get already authorized devices
         const devices = await navigator.usb.getDevices();
         
-        if (devices.length === 0) {
-            // Request device selection
-            const device = await navigator.usb.requestDevice({ filters: [] });
-            if (device) {
-                addDetectedDevice({
-                    name: device.productName || 'USB Device',
-                    port: 'USB',
-                    vendor: device.manufacturerName || `VID: ${device.vendorId}`,
-                    product: device.productName || `PID: ${device.productId}`
-                });
-            }
-        } else {
+        if (devices.length > 0) {
             devices.forEach(device => {
+                const vendorId = `0x${device.vendorId.toString(16).padStart(4, '0')}`;
+                const productId = `0x${device.productId.toString(16).padStart(4, '0')}`;
+                const brand = VENDOR_IDS[vendorId] || device.manufacturerName;
+                
                 addDetectedDevice({
-                    name: device.productName || 'USB Device',
+                    name: device.productName || (brand ? `${brand} Device` : 'USB Device'),
                     port: 'USB',
-                    vendor: device.manufacturerName || `VID: ${device.vendorId}`,
-                    product: device.productName || `PID: ${device.productId}`
+                    vendor: brand || device.manufacturerName || vendorId,
+                    product: device.productName || productId,
+                    vendorId: vendorId,
+                    productId: productId
                 });
+                count++;
             });
         }
+        
+        // Request user to select a device
+        try {
+            const device = await navigator.usb.requestDevice({ filters: [] });
+            if (device) {
+                const vendorId = `0x${device.vendorId.toString(16).padStart(4, '0')}`;
+                const productId = `0x${device.productId.toString(16).padStart(4, '0')}`;
+                const brand = VENDOR_IDS[vendorId] || device.manufacturerName;
+                
+                addDetectedDevice({
+                    name: device.productName || (brand ? `${brand} Device` : 'USB Device'),
+                    port: 'USB',
+                    vendor: brand || device.manufacturerName || vendorId,
+                    product: device.productName || productId,
+                    vendorId: vendorId,
+                    productId: productId
+                });
+                count++;
+            }
+        } catch (err) {
+            if (err.name !== 'NotFoundError') {
+                console.log('User cancelled USB device selection');
+            }
+        }
     } catch (error) {
-        console.log('USB detection cancelled or failed:', error);
+        console.error('USB detection error:', error);
+        throw error;
     }
+    return count;
 }
 
 function addDetectedDevice(deviceInfo) {
     const section = document.getElementById('detectedDevicesSection');
     const list = document.getElementById('detectedDevicesList');
     
-    // Determine device type based on name/vendor
+    // Determine device type based on name/vendor/product
     let deviceType = 'barcode_scanner';
-    const nameLower = (deviceInfo.name + ' ' + deviceInfo.vendor + ' ' + deviceInfo.product).toLowerCase();
+    const searchText = (
+        (deviceInfo.name || '') + ' ' + 
+        (deviceInfo.vendor || '') + ' ' + 
+        (deviceInfo.product || '') + ' ' +
+        (deviceInfo.vendorId || '') + ' ' +
+        (deviceInfo.productId || '')
+    ).toLowerCase();
     
-    if (nameLower.includes('printer') || nameLower.includes('epson') || nameLower.includes('star')) {
+    // Thermal Printer detection
+    if (searchText.includes('printer') || 
+        searchText.includes('epson') || 
+        searchText.includes('star') ||
+        searchText.includes('citizen') ||
+        searchText.includes('bixolon') ||
+        searchText.includes('rongta') ||
+        searchText.includes('tm-') ||  // Epson TM series
+        searchText.includes('tsp') ||  // Star TSP series
+        searchText.includes('ct-s') || // Citizen series
+        searchText.includes('srp')) {  // Samsung/Bixolon SRP series
         deviceType = 'thermal_printer';
-    } else if (nameLower.includes('drawer')) {
+    }
+    // Barcode Scanner detection
+    else if (searchText.includes('scanner') || 
+                searchText.includes('barcode') ||
+                searchText.includes('honeywell') ||
+                searchText.includes('zebra') ||
+                searchText.includes('datalogic') ||
+                searchText.includes('symbol') ||
+                searchText.includes('voyager') ||
+                searchText.includes('quickscan') ||
+                searchText.includes('ds') ||      // Zebra DS series
+                searchText.includes('ls2208')) {  // Symbol LS series
+        deviceType = 'barcode_scanner';
+    }
+    // Cash Drawer detection
+    else if (searchText.includes('drawer') || 
+                searchText.includes('apg') ||
+                searchText.includes('cash')) {
         deviceType = 'cash_drawer';
     }
     
