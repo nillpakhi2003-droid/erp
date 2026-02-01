@@ -15,6 +15,8 @@
                 size: 30mm 20mm portrait;
             @elseif($labelSize == '40x30')
                 size: 40mm 30mm portrait;
+            @elseif($labelSize == '45x35')
+                size: 45mm 35mm portrait;
             @elseif($labelSize == '50x30')
                 size: 50mm 30mm portrait;
             @elseif($labelSize == '60x40')
@@ -24,7 +26,7 @@
             @elseif($labelSize == '100x50')
                 size: 100mm 50mm portrait;
             @else
-                size: 50mm 30mm portrait;
+                size: 45mm 35mm portrait;
             @endif
         }
         
@@ -67,7 +69,6 @@
             border: none;
             text-align: center;
             padding: 0;
-            margin: 0 auto;
             background: white;
             page-break-after: always;
             break-after: page;
@@ -87,6 +88,9 @@
             @elseif($labelSize == '40x30')
                 width: 40mm;
                 height: 30mm;
+            @elseif($labelSize == '45x35')
+                width: 45mm;
+                height: 35mm;
             @elseif($labelSize == '50x30')
                 width: 50mm;
                 height: 30mm;
@@ -100,9 +104,11 @@
                 width: 100mm;
                 height: 50mm;
             @else
-                width: 50mm;
-                height: 30mm;
+                width: 45mm;
+                height: 35mm;
             @endif
+            margin-left: {{ $offsetX ?? 0 }}mm;
+            margin-top: {{ $offsetY ?? 0 }}mm;
         }
         
         .product-name {
@@ -211,6 +217,34 @@
             font-size: 7pt;
             font-weight: bold;
             margin-top: 0;
+        }
+        
+        /* 45x35mm - Your Custom Size */
+        .label-45x35 {
+            width: 45mm;
+            height: 35mm;
+            padding: 1mm;
+        }
+        .label-45x35 .product-name {
+            font-size: 8pt;
+            font-weight: bold;
+            margin-bottom: 0.5mm;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .label-45x35 .barcode-svg {
+            height: 18mm;
+            margin: 0;
+        }
+        .label-45x35 .barcode-text {
+            font-size: 7pt;
+            margin-top: 0;
+        }
+        .label-45x35 .price {
+            font-size: 8pt;
+            font-weight: bold;
+            margin-top: 0.5mm;
         }
         
         /* 50x30mm - Standard */
@@ -433,13 +467,14 @@
                 '20x10': { width: 1.5, height: 20, fontSize: 8 },
                 '30x20': { width: 2, height: 30, fontSize: 10 },
                 '40x30': { width: 2.5, height: 40, fontSize: 12 },
+                '45x35': { width: 2.5, height: 48, fontSize: 13 },
                 '50x30': { width: 2.5, height: 45, fontSize: 12 },
                 '60x40': { width: 3, height: 55, fontSize: 14 },
                 '70x50': { width: 3, height: 65, fontSize: 16 },
                 '100x50': { width: 3.5, height: 75, fontSize: 18 }
             };
             
-            const settings = barcodeSettings[labelSize] || barcodeSettings['50x30'];
+            const settings = barcodeSettings[labelSize] || barcodeSettings['45x35'];
             
             @foreach($products as $item)
                 @for($i = 0; $i < $item['quantity']; $i++)

@@ -146,19 +146,65 @@
                             <select name="label_size" id="labelSizeSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required onchange="updateSizePreview()">
                                 <option value="20x10" data-width="20" data-height="10">20mm × 10mm - Mini (Very Small Items)</option>
                                 <option value="30x20" data-width="30" data-height="20">30mm × 20mm - Small (Small Products)</option>
-                                <option value="40x30" data-width="40" data-height="30" selected>40mm × 30mm - Medium (Standard Retail)</option>
+                                <option value="40x30" data-width="40" data-height="30">40mm × 30mm - Medium (Standard Retail)</option>
+                                <option value="45x35" data-width="45" data-height="35" selected>45mm × 35mm - Your Size (Custom)</option>
                                 <option value="50x30" data-width="50" data-height="30">50mm × 30mm - Standard (Most Products)</option>
                                 <option value="60x40" data-width="60" data-height="40">60mm × 40mm - Large (Larger Items)</option>
                                 <option value="70x50" data-width="70" data-height="50">70mm × 50mm - XL (Large Products)</option>
                                 <option value="100x50" data-width="100" data-height="50">100mm × 50mm - Wide (Wide Labels)</option>
                             </select>
                             <div id="sizePreview" class="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
-                                <strong>📏 Selected Size:</strong> <span id="sizeInfo">40mm × 30mm</span><br>
+                                <strong>📏 Selected Size:</strong> <span id="sizeInfo">45mm × 35mm</span><br>
                                 <span class="text-gray-600">Ensure your Rongta printer has this size sticker loaded</span>
                             </div>
                             <p class="text-xs text-gray-500 mt-1">⚠️ Match with your actual sticker paper size</p>
 ```                        </div>
-
+                        <!-- Print Position Adjustment -->
+                        <div class="mb-4 border border-gray-300 rounded-lg p-4 bg-gray-50">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">
+                                🎯 Print Position Adjustment
+                            </label>
+                            
+                            <!-- Horizontal Position -->
+                            <div class="mb-3">
+                                <label class="block text-xs text-gray-600 mb-1">Horizontal Position:</label>
+                                <div class="flex gap-2">
+                                    <button type="button" onclick="adjustPosition('h', -1)" class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 text-sm">
+                                        ← Left
+                                    </button>
+                                    <button type="button" onclick="adjustPosition('h', 0)" class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 text-sm">
+                                        ⊙ Center
+                                    </button>
+                                    <button type="button" onclick="adjustPosition('h', 1)" class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 text-sm">
+                                        Right →
+                                    </button>
+                                </div>
+                                <input type="hidden" name="offset_x" id="offsetX" value="0">
+                                <div class="text-xs text-center mt-1 text-gray-500">Offset: <span id="offsetXDisplay">0mm</span></div>
+                            </div>
+                            
+                            <!-- Vertical Position -->
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Vertical Position:</label>
+                                <div class="flex gap-2">
+                                    <button type="button" onclick="adjustPosition('v', -1)" class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 text-sm">
+                                        ↑ Up
+                                    </button>
+                                    <button type="button" onclick="adjustPosition('v', 0)" class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 text-sm">
+                                        ⊙ Center
+                                    </button>
+                                    <button type="button" onclick="adjustPosition('v', 1)" class="flex-1 px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-100 text-sm">
+                                        Down ↓
+                                    </button>
+                                </div>
+                                <input type="hidden" name="offset_y" id="offsetY" value="0">
+                                <div class="text-xs text-center mt-1 text-gray-500">Offset: <span id="offsetYDisplay">0mm</span></div>
+                            </div>
+                            
+                            <button type="button" onclick="resetPosition()" class="w-full mt-3 px-3 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200">
+                                Reset to Center
+                            </button>
+                        </div>
                         <!-- Include Options -->
                         <div class="mb-4 space-y-2">
                             <label class="flex items-center">
@@ -302,10 +348,60 @@
         sizeInfo.textContent = `${width}mm × ${height}mm`;
     }
 
+    // Print position adjustment
+    function adjustPosition(direction, amount) {
+        const stepSize = 2; // 2mm steps
+        
+        if (direction === 'h') {
+            const currentOffset = parseInt(document.getElementById('offsetX').value) || 0;
+            let newOffset;
+            if (amount === 0) {
+                newOffset = 0; // Center
+            } else {
+                newOffset = currentOffset + (amount * stepSize);
+            }
+            document.getElementById('offsetX').value = newOffset;
+            document.getElementById('offsetXDisplay').textContent = newOffset + 'mm';
+            localStorage.setItem('barcode_offset_x', newOffset);
+        } else if (direction === 'v') {
+            const currentOffset = parseInt(document.getElementById('offsetY').value) || 0;
+            let newOffset;
+            if (amount === 0) {
+                newOffset = 0; // Center
+            } else {
+                newOffset = currentOffset + (amount * stepSize);
+            }
+            document.getElementById('offsetY').value = newOffset;
+            document.getElementById('offsetYDisplay').textContent = newOffset + 'mm';
+            localStorage.setItem('barcode_offset_y', newOffset);
+        }
+    }
+
+    function resetPosition() {
+        document.getElementById('offsetX').value = 0;
+        document.getElementById('offsetY').value = 0;
+        document.getElementById('offsetXDisplay').textContent = '0mm';
+        document.getElementById('offsetYDisplay').textContent = '0mm';
+        localStorage.removeItem('barcode_offset_x');
+        localStorage.removeItem('barcode_offset_y');
+    }
+
     // Initialize size preview on page load
     document.addEventListener('DOMContentLoaded', function() {
         updateSizePreview();
         updateSelection(); // Initialize selection state
+        
+        // Load saved offsets
+        const savedOffsetX = localStorage.getItem('barcode_offset_x');
+        const savedOffsetY = localStorage.getItem('barcode_offset_y');
+        if (savedOffsetX) {
+            document.getElementById('offsetX').value = savedOffsetX;
+            document.getElementById('offsetXDisplay').textContent = savedOffsetX + 'mm';
+        }
+        if (savedOffsetY) {
+            document.getElementById('offsetY').value = savedOffsetY;
+            document.getElementById('offsetYDisplay').textContent = savedOffsetY + 'mm';
+        }
     });
 </script>
 @endsection

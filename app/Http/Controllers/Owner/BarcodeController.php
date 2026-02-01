@@ -46,9 +46,11 @@ class BarcodeController extends Controller
             'products' => 'required|array',
             'products.*.id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',
-            'label_size' => 'required|in:20x10,30x20,40x30,50x30,60x40,70x50,100x50',
+            'label_size' => 'required|in:20x10,30x20,40x30,45x35,50x30,60x40,70x50,100x50',
             'include_price' => 'boolean',
             'include_name' => 'boolean',
+            'offset_x' => 'nullable|integer',
+            'offset_y' => 'nullable|integer',
         ]);
 
         $business = Auth::user()->business;
@@ -77,6 +79,8 @@ class BarcodeController extends Controller
             'labelSize' => $request->label_size,
             'includePrice' => $request->boolean('include_price', true),
             'includeName' => $request->boolean('include_name', true),
+            'offsetX' => $request->input('offset_x', 0),
+            'offsetY' => $request->input('offset_y', 0),
         ]);
     }
 
