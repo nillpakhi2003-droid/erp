@@ -5,9 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print Barcodes</title>
     <style>
+        /* Page size matching sticker dimensions */
         @page {
             margin: 0;
             padding: 0;
+            @if($labelSize == '20x10')
+                size: 20mm 10mm;
+            @elseif($labelSize == '30x20')
+                size: 30mm 20mm;
+            @elseif($labelSize == '40x30')
+                size: 40mm 30mm;
+            @elseif($labelSize == '50x30')
+                size: 50mm 30mm;
+            @elseif($labelSize == '60x40')
+                size: 60mm 40mm;
+            @elseif($labelSize == '70x50')
+                size: 70mm 50mm;
+            @elseif($labelSize == '100x50')
+                size: 100mm 50mm;
+            @else
+                size: 50mm 30mm;
+            @endif
         }
         
         * {
@@ -30,9 +48,9 @@
         }
         
         .barcode-label {
-            border: 1px solid #000;
+            border: none;
             text-align: center;
-            padding: 2mm;
+            padding: 1mm;
             background: white;
             page-break-after: always;
             break-after: page;
@@ -41,6 +59,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            box-sizing: border-box;
         }
         
         /* 20x10mm - Mini */

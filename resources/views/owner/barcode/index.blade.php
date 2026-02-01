@@ -133,17 +133,21 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 {{ __('pos.label_size') ?? 'Sticker Size' }}
                             </label>
-                            <select name="label_size" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
-                                <option value="20x10">20mm x 10mm (Mini)</option>
-                                <option value="30x20">30mm x 20mm (Small)</option>
-                                <option value="40x30" selected>40mm x 30mm (Medium)</option>
-                                <option value="50x30">50mm x 30mm (Standard)</option>
-                                <option value="60x40">60mm x 40mm (Large)</option>
-                                <option value="70x50">70mm x 50mm (Extra Large)</option>
-                                <option value="100x50">100mm x 50mm (Wide)</option>
+                            <select name="label_size" id="labelSizeSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required onchange="updateSizePreview()">
+                                <option value="20x10" data-width="20" data-height="10">20mm × 10mm - Mini (Very Small Items)</option>
+                                <option value="30x20" data-width="30" data-height="20">30mm × 20mm - Small (Small Products)</option>
+                                <option value="40x30" data-width="40" data-height="30" selected>40mm × 30mm - Medium (Standard Retail)</option>
+                                <option value="50x30" data-width="50" data-height="30">50mm × 30mm - Standard (Most Products)</option>
+                                <option value="60x40" data-width="60" data-height="40">60mm × 40mm - Large (Larger Items)</option>
+                                <option value="70x50" data-width="70" data-height="50">70mm × 50mm - XL (Large Products)</option>
+                                <option value="100x50" data-width="100" data-height="50">100mm × 50mm - Wide (Wide Labels)</option>
                             </select>
-                            <p class="text-xs text-gray-500 mt-1">Standard barcode sticker sizes</p>
-                        </div>
+                            <div id="sizePreview" class="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs">
+                                <strong>📏 Selected Size:</strong> <span id="sizeInfo">40mm × 30mm</span><br>
+                                <span class="text-gray-600">Ensure your Rongta printer has this size sticker loaded</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">⚠️ Match with your actual sticker paper size</p>
+```                        </div>
 
                         <!-- Include Options -->
                         <div class="mb-4 space-y-2">
@@ -276,6 +280,22 @@
             quantityInput.value = 1;
         });
         updateSelection();
+    }
+
+    // Update size preview
+    function updateSizePreview() {
+        const select = document.getElementById('labelSizeSelect');
+        const selectedOption = select.options[select.selectedIndex];
+        const width = selectedOption.dataset.width;
+        const height = selectedOption.dataset.height;
+        const sizeInfo = document.getElementById('sizeInfo');
+        sizeInfo.textContent = `${width}mm × ${height}mm`;
+    }
+
+    // Initialize size preview on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSizePreview();
+    });
     }
 </script>
 @endsection
