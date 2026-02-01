@@ -3,30 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print Barcodes</title>
+    <title>Print Barcodes - {{ $labelSize }}</title>
     <style>
         /* Page size matching sticker dimensions */
         @page {
-            margin: 0mm;
-            padding: 0mm;
+            margin: 0;
             @if($labelSize == '20x10')
-                size: 20mm 10mm portrait;
+                size: 20mm 10mm;
             @elseif($labelSize == '30x20')
-                size: 30mm 20mm portrait;
+                size: 30mm 20mm;
             @elseif($labelSize == '40x30')
-                size: 40mm 30mm portrait;
+                size: 40mm 30mm;
             @elseif($labelSize == '45x35')
-                size: 45mm 35mm portrait;
+                size: 45mm 35mm;
             @elseif($labelSize == '50x30')
-                size: 50mm 30mm portrait;
+                size: 50mm 30mm;
             @elseif($labelSize == '60x40')
-                size: 60mm 40mm portrait;
+                size: 60mm 40mm;
             @elseif($labelSize == '70x50')
-                size: 70mm 50mm portrait;
+                size: 70mm 50mm;
             @elseif($labelSize == '100x50')
-                size: 100mm 50mm portrait;
+                size: 100mm 50mm;
             @else
-                size: 45mm 35mm portrait;
+                size: 45mm 35mm;
             @endif
         }
         
@@ -434,12 +433,65 @@
             background: #f44336;
             color: white;
         }
+        
+        .paper-size-warning {
+            position: fixed;
+            top: 60px;
+            right: 10px;
+            background: #ff9800;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 999;
+            max-width: 300px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .paper-size-warning strong {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .paper-size-warning code {
+            background: rgba(0,0,0,0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
     </style>
     
     <!-- JsBarcode Library -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
+    <div class="paper-size-warning no-print">
+        <strong>⚠️ IMPORTANT: Set Paper Size!</strong>
+        In print dialog, change "Paper size" to:<br>
+        @if($labelSize == '20x10')
+            <code>20mm × 10mm</code>
+        @elseif($labelSize == '30x20')
+            <code>30mm × 20mm</code>
+        @elseif($labelSize == '40x30')
+            <code>40mm × 30mm</code>
+        @elseif($labelSize == '45x35')
+            <code>45mm × 35mm</code>
+        @elseif($labelSize == '50x30')
+            <code>50mm × 30mm</code>
+        @elseif($labelSize == '60x40')
+            <code>60mm × 40mm</code>
+        @elseif($labelSize == '70x50')
+            <code>70mm × 50mm</code>
+        @elseif($labelSize == '100x50')
+            <code>100mm × 50mm</code>
+        @else
+            <code>45mm × 35mm</code>
+        @endif
+        <br><small>or configure custom size in printer settings</small>
+    </div>
+    
     <div class="print-controls no-print">
         <button class="btn-print" onclick="window.print()">🖨️ Print Labels</button>
         <button class="btn-close" onclick="window.close()">✖ Close</button>
