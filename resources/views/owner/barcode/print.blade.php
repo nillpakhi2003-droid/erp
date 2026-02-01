@@ -7,8 +7,8 @@
     <style>
         /* Page size matching sticker dimensions */
         @page {
-            margin: 0;
-            padding: 0;
+            margin: 0mm;
+            padding: 0mm;
             @if($labelSize == '20x10')
                 size: 20mm 10mm portrait;
             @elseif($labelSize == '30x20')
@@ -323,10 +323,13 @@
         }
         
         @media print {
+            @page {
+                margin: 0mm;
+            }
             html, body {
                 background: white;
-                margin: 0 !important;
-                padding: 0 !important;
+                margin: 0mm !important;
+                padding: 0mm !important;
                 width: 100%;
                 height: 100%;
             }
@@ -334,20 +337,21 @@
                 display: none !important;
             }
             .barcode-container {
-                margin: 0 auto;
-                padding: 0;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
+                margin: 0mm !important;
+                padding: 0mm !important;
+                display: block;
             }
             .barcode-label {
                 page-break-after: always;
                 break-after: page;
                 page-break-inside: avoid;
                 break-inside: avoid;
-                margin: 0 auto !important;
-                padding: 0 !important;
+                margin: 0mm !important;
+                padding: 0mm !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
             }
             .barcode-label:last-child {
                 page-break-after: auto;
@@ -426,13 +430,13 @@
             
             // Configure barcode settings based on label size
             const barcodeSettings = {
-                '20x10': { width: 1, height: 15, fontSize: 8 },
-                '30x20': { width: 1.5, height: 25, fontSize: 10 },
-                '40x30': { width: 2, height: 35, fontSize: 12 },
-                '50x30': { width: 2, height: 40, fontSize: 12 },
-                '60x40': { width: 2.5, height: 50, fontSize: 14 },
-                '70x50': { width: 2.5, height: 60, fontSize: 16 },
-                '100x50': { width: 3, height: 70, fontSize: 18 }
+                '20x10': { width: 1.5, height: 20, fontSize: 8 },
+                '30x20': { width: 2, height: 30, fontSize: 10 },
+                '40x30': { width: 2.5, height: 40, fontSize: 12 },
+                '50x30': { width: 2.5, height: 45, fontSize: 12 },
+                '60x40': { width: 3, height: 55, fontSize: 14 },
+                '70x50': { width: 3, height: 65, fontSize: 16 },
+                '100x50': { width: 3.5, height: 75, fontSize: 18 }
             };
             
             const settings = barcodeSettings[labelSize] || barcodeSettings['50x30'];
@@ -449,12 +453,12 @@
                             margin: 0,
                             marginTop: 0,
                             marginBottom: 0,
-                            marginLeft: 2,
-                            marginRight: 2,
+                            marginLeft: 0,
+                            marginRight: 0,
                             fontSize: settings.fontSize,
                             textAlign: "center",
                             textPosition: "bottom",
-                            textMargin: 1,
+                            textMargin: 0,
                             background: "#ffffff",
                             lineColor: "#000000"
                         });
