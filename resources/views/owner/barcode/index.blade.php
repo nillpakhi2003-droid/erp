@@ -66,6 +66,16 @@
         <form id="barcodeForm" action="{{ route('owner.barcode.generate') }}" method="POST" target="_blank">
             @csrf
             
+            @if($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                    <ul class="list-disc list-inside">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Product Selection -->
                 <div class="lg:col-span-2">
@@ -295,7 +305,7 @@
     // Initialize size preview on page load
     document.addEventListener('DOMContentLoaded', function() {
         updateSizePreview();
+        updateSelection(); // Initialize selection state
     });
-    }
 </script>
 @endsection
