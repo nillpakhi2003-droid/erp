@@ -7,25 +7,26 @@
     <style>
         /* Page size matching sticker dimensions */
         @page {
-            margin: 0;
+            margin: 0mm;
+            padding: 0mm;
             @if($labelSize == '20x10')
-                size: 20mm 10mm;
+                size: 20mm 10mm portrait;
             @elseif($labelSize == '30x20')
-                size: 30mm 20mm;
+                size: 30mm 20mm portrait;
             @elseif($labelSize == '40x30')
-                size: 40mm 30mm;
+                size: 40mm 30mm portrait;
             @elseif($labelSize == '45x35')
-                size: 45mm 35mm;
+                size: 45mm 35mm portrait;
             @elseif($labelSize == '50x30')
-                size: 50mm 30mm;
+                size: 50mm 30mm portrait;
             @elseif($labelSize == '60x40')
-                size: 60mm 40mm;
+                size: 60mm 40mm portrait;
             @elseif($labelSize == '70x50')
-                size: 70mm 50mm;
+                size: 70mm 50mm portrait;
             @elseif($labelSize == '100x50')
-                size: 100mm 50mm;
+                size: 100mm 50mm portrait;
             @else
-                size: 45mm 35mm;
+                size: 45mm 35mm portrait;
             @endif
         }
         
