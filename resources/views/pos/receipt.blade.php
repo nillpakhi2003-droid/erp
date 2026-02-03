@@ -17,16 +17,16 @@
         
         body {
             font-family: 'Arial', 'Helvetica', sans-serif;
-            font-size: {{ $template->receipt_font_size ?? '12px' }};
-            line-height: 1.1;
+            font-size: {{ $template->receipt_font_size ?? '13px' }};
+            line-height: 1.2;
             color: #000;
             background: #fff;
             width: {{ $template->receipt_paper_size ?? '80mm' }};
             max-width: {{ $template->receipt_paper_size ?? '80mm' }};
             height: auto;
             min-height: auto;
-            margin: 0;
-            padding: 2mm 2mm 3mm 2mm;
+            margin: 0 auto;
+            padding: 3mm 4mm;
             page-break-after: avoid;
         }
         
@@ -38,14 +38,14 @@
         }
         
         .logo {
-            max-width: 80px;
-            margin: 0 auto 2px;
+            max-width: 100px;
+            margin: 0 auto 3px;
         }
         
         .company-name {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 1px;
+            margin-bottom: 2px;
         }
         
         .company-info {

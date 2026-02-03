@@ -606,11 +606,6 @@
                     }
                 @endfor
             @endforeach
-            
-            // Auto-print dialog after barcodes are generated
-            setTimeout(function() {
-                window.print();
-            }, 800);
         });
     </script>
 </body>
