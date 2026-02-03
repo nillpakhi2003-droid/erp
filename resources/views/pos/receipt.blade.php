@@ -305,12 +305,7 @@
             document.documentElement.style.height = 'auto';
         });
         
-        // Auto-print when page loads
-        window.onload = function() {
-            setTimeout(function() {
-                window.print();
-            }, 300);
-        };
+        // Print manually using the browser dialog (auto-print removed to avoid duplicates)
     </script>
 </body>
 </html>
