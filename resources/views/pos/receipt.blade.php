@@ -4,6 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Receipt - {{ $transaction->transaction_number }}</title>
+    
+    <!-- QZ Tray for Direct Printing -->
+    <script src="https://cdn.jsdelivr.net/npm/qz-tray@2.2/qz-tray.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/build/sha256.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -16,9 +21,9 @@
         }
         
         body {
-            font-family: 'Arial', 'Helvetica', sans-serif;
-            font-size: {{ $template->receipt_font_size ?? '13px' }};
-            line-height: 1.2;
+            font-family: 'Courier New', 'Courier', monospace;
+            font-size: {{ $template->receipt_font_size ?? '12px' }};
+            line-height: 1.3;
             color: #000;
             background: #fff;
             width: {{ $template->receipt_paper_size ?? '80mm' }};
@@ -26,7 +31,7 @@
             height: auto;
             min-height: auto;
             margin: 0 auto;
-            padding: 3mm 4mm;
+            padding: 2mm 3mm;
             page-break-after: avoid;
         }
         
@@ -43,14 +48,14 @@
         }
         
         .company-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             margin-bottom: 2px;
         }
         
         .company-info {
-            font-size: 11px;
-            line-height: 1.1;
+            font-size: 10px;
+            line-height: 1.2;
         }
         
         .header-text {
@@ -61,7 +66,7 @@
         
         .receipt-meta {
             margin: 3px 0;
-            font-size: 11px;
+            font-size: 10px;
         }
         
         .receipt-meta table {
@@ -114,7 +119,7 @@
         }
         
         .grand-total {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             border-top: 2px solid #000;
             padding-top: 2px !important;
@@ -305,7 +310,81 @@
             document.documentElement.style.height = 'auto';
         });
         
-        // Print manually using the browser dialog (auto-print removed to avoid duplicates)
+        // Auto-print with QZ Tray (fallback to browser print)
+        setTimeout(function() {
+            printReceiptWithQZ();
+        }, 500);
+        
+        function printReceiptWithQZ() {
+            if (typeof qz !== 'undefined') {
+                if (!qz.websocket.isActive()) {
+                    qz.websocket.connect().then(function() {
+                        findThermalPrinter();
+                    }).catch(function(err) {
+                        console.log('QZ Tray not available, using browser print');
+                        window.print();
+                    });
+                } else {
+                    findThermalPrinter();
+                }
+            } else {
+                window.print();
+            }
+        }
+        
+        function findThermalPrinter() {
+            qz.printers.find().then(function(printers) {
+                // Look for thermal receipt printer
+                let printer = printers.find(p => 
+                    p.toLowerCase().includes('thermal') ||
+                    p.toLowerCase().includes('receipt') ||
+                    p.toLowerCase().includes('pos') ||
+                    p.toLowerCase().includes('rongta') ||
+                    p.toLowerCase().includes('80mm')
+                ) || printers[0];
+                
+                printReceipt(printer);
+            }).catch(function(err) {
+                console.error(err);
+                window.print();
+            });
+        }
+        
+        function printReceipt(printer) {
+            let config = qz.configs.create(printer, {
+                size: { width: 80, units: 'mm' },
+                margins: { top: 2, right: 2, bottom: 2, left: 2, units: 'mm' }
+            });
+            
+            // Get receipt content with proper styling
+            let styles = document.querySelector('style').innerHTML;
+            
+            // Create minimal HTML for thermal printer
+            let receiptHTML = `<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <style>${styles}</style>
+            </head>
+            <body style="width: 80mm; margin: 0; padding: 2mm 3mm;">
+                ${document.body.innerHTML}
+            </body>
+            </html>`;
+            
+            let printData = [{
+                type: 'pixel',
+                format: 'html',
+                flavor: 'plain',
+                data: receiptHTML
+            }];
+            
+            qz.print(config, printData).then(function() {
+                console.log('Receipt printed successfully via QZ Tray');
+            }).catch(function(err) {
+                console.error(err);
+                window.print();
+            });
+        }
     </script>
 </body>
 </html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>QZ Tray Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/qz-tray@2.2/qz-tray.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/build/sha256.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover { background: #0056b3; }
+        #printerList {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        #printerList li {
+            padding: 5px 0;
+            list-style: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>🖨️ QZ Tray Connection Test</h1>
+    
+    <div id="status" class="status info">
+        <strong>Status:</strong> <span id="statusText">Checking...</span>
+    </div>
+    
+    <div>
+        <button onclick="testConnection()">1️⃣ Test Connection</button>
+        <button onclick="listPrinters()">2️⃣ List Printers</button>
+        <button onclick="testBarcodePrint()">3️⃣ Test Barcode (45x35mm)</button>
+        <button onclick="testReceiptPrint()">4️⃣ Test Receipt (80mm)</button>
+    </div>
+    
+    <div id="printerList"></div>
+    
+    <h3>Instructions:</h3>
+    <ol>
+        <li><strong>Install QZ Tray:</strong> Download from <a href="https://qz.io/download/" target="_blank">https://qz.io/download/</a></li>
+        <li><strong>Start QZ Tray:</strong> Look for the QZ icon in your system tray (Windows/Mac/Linux)</li>
+        <li><strong>Run Tests:</strong> Click buttons above in order</li>
+    </ol>
+    
+    <h3>Test Results:</h3>
+    <div id="results"></div>
+    
+    <script>
+        let selectedPrinter = null;
+        
+        function addResult(message, type) {
+            const div = document.createElement('div');
+            div.className = 'status ' + type;
+            div.innerHTML = '<strong>' + new Date().toLocaleTimeString() + ':</strong> ' + message;
+            document.getElementById('results').prepend(div);
+        }
+        
+        function updateStatus(text, type) {
+            document.getElementById('status').className = 'status ' + type;
+            document.getElementById('statusText').textContent = text;
+        }
+        
+        // Check if QZ is loaded
+        window.addEventListener('DOMContentLoaded', function() {
+            if (typeof qz !== 'undefined') {
+                addResult('✅ QZ Tray library loaded successfully', 'success');
+                updateStatus('QZ library loaded, click "Test Connection"', 'info');
+            } else {
+                addResult('❌ QZ Tray library failed to load', 'error');
+                updateStatus('QZ library not loaded!', 'error');
+            }
+        });
+        
+        function testConnection() {
+            addResult('Testing QZ Tray connection...', 'info');
+            
+            if (qz.websocket.isActive()) {
+                addResult('✅ QZ Tray already connected!', 'success');
+                updateStatus('Connected to QZ Tray', 'success');
+                return;
+            }
+            
+            qz.websocket.connect()
+                .then(function() {
+                    addResult('✅ Successfully connected to QZ Tray!', 'success');
+                    updateStatus('Connected to QZ Tray v' + qz.version, 'success');
+                })
+                .catch(function(err) {
+                    addResult('❌ Connection failed: ' + err, 'error');
+                    updateStatus('QZ Tray not running!', 'error');
+                    alert('QZ Tray is not running!\n\nPlease:\n1. Install QZ Tray from https://qz.io/download/\n2. Start QZ Tray application\n3. Try again');
+                });
+        }
+        
+        function listPrinters() {
+            if (!qz.websocket.isActive()) {
+                alert('Please connect to QZ Tray first!');
+                return;
+            }
+            
+            addResult('Fetching printer list...', 'info');
+            
+            qz.printers.find()
+                .then(function(printers) {
+                    let html = '<h4>Available Printers (' + printers.length + '):</h4><ul>';
+                    printers.forEach(function(printer, index) {
+                        html += '<li><strong>' + (index + 1) + '.</strong> ' + printer;
+                        
+                        // Highlight thermal/label printers
+                        if (printer.toLowerCase().includes('rongta') ||
+                            printer.toLowerCase().includes('thermal') ||
+                            printer.toLowerCase().includes('label') ||
+                            printer.toLowerCase().includes('receipt')) {
+                            html += ' <span style="color: green;">✓ (Thermal/Label)</span>';
+                        }
+                        
+                        html += '</li>';
+                        
+                        if (index === 0) selectedPrinter = printer;
+                    });
+                    html += '</ul>';
+                    
+                    document.getElementById('printerList').innerHTML = html;
+                    addResult('✅ Found ' + printers.length + ' printer(s)', 'success');
+                    
+                    if (selectedPrinter) {
+                        addResult('📌 Default printer: ' + selectedPrinter, 'info');
+                    }
+                })
+                .catch(function(err) {
+                    addResult('❌ Failed to get printers: ' + err, 'error');
+                });
+        }
+        
+        function testBarcodePrint() {
+            if (!selectedPrinter) {
+                alert('Please list printers first!');
+                return;
+            }
+            
+            let config = qz.configs.create(selectedPrinter, {
+                size: { width: 45, height: 35, units: 'mm' },
+                margins: { top: 0, right: 0, bottom: 0, left: 0, units: 'mm' }
+            });
+            
+            let testHTML = `
+                <html>
+                <head>
+                    <style>
+                        body { margin: 0; padding: 2mm; width: 45mm; height: 35mm; font-family: Arial; }
+                        .test-box { border: 2px solid black; padding: 2mm; text-align: center; }
+                        h3 { margin: 0 0 2mm 0; font-size: 12px; }
+                        p { margin: 0; font-size: 10px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="test-box">
+                        <h3>QZ TRAY TEST</h3>
+                        <p>Barcode Label</p>
+                        <p>45mm × 35mm</p>
+                        <p>${new Date().toLocaleString()}</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            let printData = [{
+                type: 'pixel',
+                format: 'html',
+                flavor: 'plain',
+                data: testHTML
+            }];
+            
+            addResult('Printing test barcode to: ' + selectedPrinter, 'info');
+            
+            qz.print(config, printData)
+                .then(function() {
+                    addResult('✅ Barcode test print sent successfully!', 'success');
+                    alert('Test barcode sent to printer!\nCheck your printer output.');
+                })
+                .catch(function(err) {
+                    addResult('❌ Print failed: ' + err, 'error');
+                    alert('Print failed: ' + err);
+                });
+        }
+        
+        function testReceiptPrint() {
+            if (!selectedPrinter) {
+                alert('Please list printers first!');
+                return;
+            }
+            
+            let config = qz.configs.create(selectedPrinter, {
+                size: { width: 80, units: 'mm' },
+                margins: { top: 2, right: 2, bottom: 2, left: 2, units: 'mm' }
+            });
+            
+            let testHTML = `
+                <html>
+                <head>
+                    <style>
+                        body { 
+                            margin: 0; 
+                            padding: 3mm; 
+                            width: 80mm; 
+                            font-family: 'Courier New', monospace;
+                            font-size: 12px;
+                        }
+                        .receipt { text-align: center; }
+                        h2 { margin: 0 0 2mm 0; font-size: 16px; }
+                        .line { border-top: 2px dashed black; margin: 3mm 0; }
+                        table { width: 100%; font-size: 11px; }
+                        .total { font-weight: bold; font-size: 13px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="receipt">
+                        <h2>QZ TRAY TEST</h2>
+                        <p>Thermal Receipt (80mm)</p>
+                        <div class="line"></div>
+                        <table>
+                            <tr><td>Test Item 1</td><td style="text-align: right;">$10.00</td></tr>
+                            <tr><td>Test Item 2</td><td style="text-align: right;">$15.00</td></tr>
+                        </table>
+                        <div class="line"></div>
+                        <table>
+                            <tr class="total"><td>TOTAL</td><td style="text-align: right;">$25.00</td></tr>
+                        </table>
+                        <div class="line"></div>
+                        <p style="font-size: 10px;">${new Date().toLocaleString()}</p>
+                        <p style="font-size: 10px;">Thank you!</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            let printData = [{
+                type: 'pixel',
+                format: 'html',
+                flavor: 'plain',
+                data: testHTML
+            }];
+            
+            addResult('Printing test receipt to: ' + selectedPrinter, 'info');
+            
+            qz.print(config, printData)
+                .then(function() {
+                    addResult('✅ Receipt test print sent successfully!', 'success');
+                    alert('Test receipt sent to printer!\nCheck your printer output.');
+                })
+                .catch(function(err) {
+                    addResult('❌ Print failed: ' + err, 'error');
+                    alert('Print failed: ' + err);
+                });
+        }
+    </script>
+</body>
+</html>

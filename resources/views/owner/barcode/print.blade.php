@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print Barcodes - {{ $labelSize }}</title>
+    
+    <!-- QZ Tray for Direct Printing -->
+    <script src="https://cdn.jsdelivr.net/npm/qz-tray@2.2/qz-tray.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/build/sha256.min.js"></script>
+    
     <style>
         /* Page size - Fixed to 45mm x 35mm for all labels */
         @page {
@@ -511,7 +516,8 @@
     </div>
     
     <div class="print-controls no-print">
-        <button class="btn-print" onclick="window.print()">🖨️ Print Labels</button>
+        <button class="btn-print" onclick="printWithQZ()">🖨️ Print with QZ Tray</button>
+        <button class="btn-print" onclick="window.print()" style="background: #2196F3;">🖨️ Browser Print</button>
         <button class="btn-close" onclick="window.close()">✖ Close</button>
     </div>
 
@@ -607,6 +613,69 @@
                 @endfor
             @endforeach
         });
+        
+        // QZ Tray Integration for Professional Printing
+        function printWithQZ() {
+            if (!qz.websocket.isActive()) {
+                qz.websocket.connect().then(function() {
+                    findPrinter();
+                }).catch(function(err) {
+                    alert('QZ Tray not running! Please install/start QZ Tray.\\nFalling back to browser print...');
+                    window.print();
+                });
+            } else {
+                findPrinter();
+            }
+        }
+        
+        function findPrinter() {
+            qz.printers.find().then(function(printers) {
+                // Look for thermal/label printer
+                let printer = printers.find(p => 
+                    p.toLowerCase().includes('rongta') || 
+                    p.toLowerCase().includes('thermal') ||
+                    p.toLowerCase().includes('label') ||
+                    p.toLowerCase().includes('barcode')
+                ) || printers[0];
+                
+                if (confirm('Print to: ' + printer + '?')) {
+                    printLabels(printer);
+                }
+            }).catch(function(err) {
+                console.error(err);
+                window.print();
+            });
+        }
+        
+        function printLabels(printer) {
+            let config = qz.configs.create(printer, {
+                size: { width: 45, height: 35, units: 'mm' },
+                margins: { top: 0, right: 0, bottom: 0, left: 0, units: 'mm' }
+            });
+            
+            let printData = [];
+            
+            // Get all barcode labels
+           document.querySelectorAll('.barcode-label').forEach(function(label) {
+                let html = label.outerHTML;
+                printData.push({
+                    type: 'pixel',
+                    format: 'html',
+                    flavor: 'plain',
+                    data: '<html><head><style>' +
+                          document.querySelector('style').innerHTML +
+                          '</style></head><body>' + html + '</body></html>'
+                });
+            });
+            
+            qz.print(config, printData).then(function() {
+                alert('Labels printed successfully!');
+            }).catch(function(err) {
+                console.error(err);
+                alert('Print failed! Using browser print...');
+                window.print();
+            });
+        }
     </script>
 </body>
 </html>
