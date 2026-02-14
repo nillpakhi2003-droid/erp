@@ -516,8 +516,9 @@
     </div>
     
     <div class="print-controls no-print">
-        <button class="btn-print" onclick="printWithQZ()">🖨️ Print with QZ Tray</button>
-        <button class="btn-print" onclick="window.print()" style="background: #2196F3;">🖨️ Browser Print</button>
+        <button class="btn-print" onclick="printWithQZ()" style="background: #4CAF50;">🖨️ Print to Rongta RP400H</button>
+        <button class="btn-print" onclick="checkQZStatus()" style="background: #FF9800;">🔍 Check QZ Status</button>
+        <button class="btn-print" onclick="window.print()" style="background: #2196F3;">🖨️ Browser Print (Fallback)</button>
         <button class="btn-close" onclick="window.close()">✖ Close</button>
     </div>
 
@@ -615,34 +616,138 @@
         });
         
         // QZ Tray Integration for Professional Printing
+        function checkQZStatus() {
+            let status = '🔍 QZ TRAY STATUS CHECK\n\n';
+            
+            // Check if QZ library loaded
+            if (typeof qz === 'undefined') {
+                status += '❌ QZ Tray Library: NOT LOADED\n';
+                status += '   → Check internet connection\n';
+                status += '   → Refresh the page\n\n';
+            } else {
+                status += '✅ QZ Tray Library: LOADED (v' + qz.version + ')\n\n';
+                
+                // Check if QZ Tray application is running
+                if (qz.websocket.isActive()) {
+                    status += '✅ QZ Tray App: RUNNING\n\n';
+                    
+                    // Try to get printers
+                    qz.printers.find().then(function(printers) {
+                        status += '🖨️ DETECTED PRINTERS:\n';
+                        if (printers.length === 0) {
+                            status += '   ❌ No printers found!\n\n';
+                            status += '📝 TROUBLESHOOTING:\n';
+                            status += '   1. Install Rongta RP400H driver\n';
+                            status += '   2. Connect USB cable\n';
+                            status += '   3. Power ON printer (24V)\n';
+                            status += '   4. Check Windows "Devices and Printers"\n';
+                        } else {
+                            printers.forEach((p, i) => {
+                                let isRongta = p.toLowerCase().includes('rongta') || p.toLowerCase().includes('rp400');
+                                status += '   ' + (i + 1) + '. ' + p + (isRongta ? ' ✅ (Detected!)' : '') + '\n';
+                            });
+                        }
+                        alert(status);
+                    }).catch(function(err) {
+                        status += '❌ Error getting printers: ' + err + '\n';
+                        alert(status);
+                    });
+                    return;
+                } else {
+                    status += '❌ QZ Tray App: NOT RUNNING\n\n';
+                    status += '📥 SETUP STEPS:\n';
+                    status += '   1. Download: https://qz.io/download/\n';
+                    status += '   2. Install QZ Tray\n';
+                    status += '   3. Start QZ Tray application\n';
+                    status += '   4. Look for QZ icon in system tray\n';
+                }
+            }
+            
+            alert(status);
+        }
+        
         function printWithQZ() {
+            console.log('QZ Tray version:', typeof qz !== 'undefined' ? qz.version : 'Not loaded');
+            
+            if (typeof qz === 'undefined') {
+                alert('QZ Tray library not loaded!\n\nPlease:\n1. Check your internet connection\n2. Refresh the page\n\nFalling back to browser print...');
+                window.print();
+                return;
+            }
+            
             if (!qz.websocket.isActive()) {
                 qz.websocket.connect().then(function() {
+                    console.log('✅ QZ Tray connected successfully');
                     findPrinter();
                 }).catch(function(err) {
-                    alert('QZ Tray not running! Please install/start QZ Tray.\\nFalling back to browser print...');
+                    console.error('QZ Tray connection error:', err);
+                    alert('❌ QZ Tray Not Running!\n\n📥 SETUP INSTRUCTIONS:\n\n1. Download QZ Tray:\n   → https://qz.io/download/\n\n2. Install QZ Tray application\n\n3. Start QZ Tray:\n   → Look for QZ icon in system tray (bottom-right)\n   → If not running, open QZ Tray from Start menu\n\n4. Install Rongta RP400H Driver:\n   → Connect USB cable\n   → Power ON printer (24V adapter)\n   → Windows should auto-detect\n   → Or download from Rongta website\n\n⚠️ After setup, refresh this page and try again.\n\n🖨️ For now, using browser print...');
                     window.print();
                 });
             } else {
+                console.log('✅ QZ Tray already connected');
                 findPrinter();
             }
         }
         
         function findPrinter() {
             qz.printers.find().then(function(printers) {
-                // Look for thermal/label printer
-                let printer = printers.find(p => 
-                    p.toLowerCase().includes('rongta') || 
-                    p.toLowerCase().includes('thermal') ||
-                    p.toLowerCase().includes('label') ||
-                    p.toLowerCase().includes('barcode')
-                ) || printers[0];
+                console.log('Available printers:', printers);
                 
-                if (confirm('Print to: ' + printer + '?')) {
-                    printLabels(printer);
+                // Look for Rongta RP400H specifically
+                let printer = printers.find(p => {
+                    const name = p.toLowerCase();
+                    return name.includes('rp400h') || 
+                           name.includes('rp-400h') ||
+                           name.includes('rp400') || 
+                           name.includes('rp-400') ||
+                           name.includes('rongta');
+                });
+                
+                // If RP400H not found, look for any thermal/label printer
+                if (!printer) {
+                    printer = printers.find(p => {
+                        const name = p.toLowerCase();
+                        return name.includes('thermal') ||
+                               name.includes('label') ||
+                               name.includes('barcode') ||
+                               name.includes('transfer');
+                    });
+                }
+                
+                // If still not found, show selection dialog
+                if (!printer && printers.length > 0) {
+                    let printerList = '🖨️ Select Your Rongta RP400H Printer:\n\n';
+                    printers.forEach((p, i) => {
+                        printerList += (i + 1) + '. ' + p + '\n';
+                    });
+                    printerList += '\nEnter printer number (1-' + printers.length + '):';
+                    
+                    let selection = prompt(printerList);
+                    if (selection && !isNaN(selection)) {
+                        let index = parseInt(selection) - 1;
+                        if (index >= 0 && index < printers.length) {
+                            printer = printers[index];
+                        }
+                    }
+                }
+                
+                if (!printer && printers.length > 0) {
+                    printer = printers[0];
+                }
+                
+                if (printer) {
+                    console.log('Selected printer:', printer);
+                    if (confirm('Print ' + {{ count($products) }} + ' label(s) to:\n' + printer + '?')) {
+                        printLabels(printer);
+                    }
+                } else {
+                    alert('❌ Rongta RP400H Not Found!\n\n✅ Please check:\n   1. Printer is powered ON (24V adapter connected)\n   2. USB cable connected to computer\n   3. Rongta RP400H driver installed\n   4. Printer shows as "Ready" in Windows Devices\n\n📥 Download driver: Search "Rongta RP400H driver" online\n\n⚠️ Falling back to browser print...');
+                    window.print();
                 }
             }).catch(function(err) {
-                console.error(err);
+                console.error('Printer detection error:', err);
+                alert('Could not detect printers.\nPlease install QZ Tray from https://qz.io/download/\n\nFalling back to browser print...');
                 window.print();
             });
         }
